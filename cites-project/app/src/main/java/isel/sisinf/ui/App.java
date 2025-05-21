@@ -26,7 +26,12 @@ package isel.sisinf.ui;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.io.InputStreamReader;
+
+import isel.sisinf.model.Client;
+import isel.sisinf.model.Person;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -164,6 +169,31 @@ class UI
             String email = reader.readLine();
             System.out.println("NIF?");
             String taxnr = reader.readLine();
+            EntityManagerFactory emf = jakarta.persistence.Persistence.createEntityManagerFactory("citesPU");
+            EntityManager em = emf.createEntityManager();
+
+            em.getTransaction().begin();
+
+            // Create person and client
+            Person person = new Person();
+            person.setName(name);
+            person.setEmail(email);
+            person.setNIF(taxnr);
+            //person.setPhoneNumber(phone);
+            //person.setAddress(address);
+
+            Client client = new Client();
+            //client.setPerson(person);
+
+            em.persist(person);
+            em.persist(client);
+
+            em.getTransaction().commit();
+
+            em.close();
+            emf.close();
+
+            System.out.println("Client successfully created!");
 
 
         }catch(IOException e){
