@@ -99,9 +99,107 @@ SELECT p.*,c.dtregister,cd.id AS cardid,cd.credit,cd.typeofcard
 FROM CLIENT c INNER JOIN PERSON p ON (c.person=p.id)
 	INNER JOIN CARD cd ON (cd.client = c.person);
 --TODO
+---------------------------------------------------
+CREATE OR REPLACE FUNCTION insert_rider()
+RETURNS trigger AS
+$$
+BEGIN
+    -- Inserir na tabela base PERSON
+    INSERT INTO PERSON(id, name, email, address, phoneNumber, taxNumber)
+    VALUES (NEW.id, NEW.name, NEW.email, NEW.address, NEW.phoneNumber, NEW.taxNumber);
+
+    -- Inserir na CLIENT
+    INSERT INTO CLIENT(person, dtregister)
+    VALUES (NEW.id, NEW.dtregister);
+
+    -- Inserir na CARD
+    INSERT INTO CARD(id, client, credit, typeofcard)
+    VALUES (NEW.cardid, NEW.id, NEW.credit, NEW.typeofcard);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+---------------------------------------------------
+CREATE OR REPLACE FUNCTION update_rider()
+RETURNS trigger AS
+$$
+BEGIN
+    -- Atualizar PERSON
+    UPDATE PERSON
+    SET name = NEW.name,
+        email = NEW.email,
+        address = NEW.address,
+        phoneNumber = NEW.phoneNumber,
+        taxNumber = NEW.taxNumber
+    WHERE id = OLD.id;
+
+    -- Atualizar CLIENT
+    UPDATE CLIENT
+    SET dtregister = NEW.dtregister
+    WHERE person = OLD.id;
+
+    -- Atualizar CARD
+    UPDATE CARD
+    SET credit = NEW.credit,
+        typeofcard = NEW.typeofcard
+    WHERE id = OLD.cardid;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+---------------------------------------------------------
+CREATE TRIGGER rider_insert
+INSTEAD OF INSERT ON RIDER
+FOR EACH ROW
+EXECUTE FUNCTION insert_rider();
+
+CREATE TRIGGER rider_update
+INSTEAD OF UPDATE ON RIDER
+FOR EACH ROW
+EXECUTE FUNCTION update_rider();
+---------------------------------------------------------
 -- endregion
 
 -- region Question 4
-CREATE OR REPLACE PROCEDURE startTrip(dockid integer, clientid  integer) ...
---TODO
+CREATE OR REPLACE PROCEDURE startTrip(dockid INTEGER, clientid INTEGER)
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    scooter_id INTEGER;
+    station_id INTEGER;
+BEGIN
+    -- Verifica se o cliente existe
+    IF NOT EXISTS (SELECT 1 FROM CLIENT WHERE person = clientid) THEN
+        RAISE EXCEPTION 'Client % does not exist', clientid;
+    END IF;
+
+    -- Obtem a scooter associada ao dock se estiver ocupada
+    SELECT scooter, station INTO scooter_id, station_id
+    FROM DOCK
+    WHERE number = dockid AND state = 'occupy';
+
+    -- Verifica se existe scooter disponível no dock
+    IF scooter_id IS NULL THEN
+        RAISE EXCEPTION 'No scooter available at dock %', dockid;
+    END IF;
+
+    -- Insere nova viagem na TRAVEL
+    INSERT INTO TRAVEL (
+        dinitial, client, scooter, stinitial
+    ) VALUES (
+        CURRENT_TIMESTAMP, clientid, scooter_id, station_id
+    );
+
+    -- Atualiza o dock para indicar que está livre
+    UPDATE DOCK
+    SET scooter = NULL,
+        state = 'free',
+        version = CURRENT_TIMESTAMP
+    WHERE number = dockid;
+
+    RAISE NOTICE 'Trip started: client %, scooter %, from dock %', clientid, scooter_id, dockid;
+END;
+$$;
+
 -- endregion
