@@ -1,3 +1,5 @@
+package isel.sisinf.model;
+
 import jakarta.persistence.*;
 
 @Entity

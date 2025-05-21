@@ -23,6 +23,10 @@ SOFTWARE.
 */
 package isel.sisinf.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import java.util.List;
+
 public class Dal
 {
     //For Demonstration purpose only

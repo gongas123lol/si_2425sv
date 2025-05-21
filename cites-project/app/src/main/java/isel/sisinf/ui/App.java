@@ -25,7 +25,11 @@ package isel.sisinf.ui;
 
 import java.util.Scanner;
 import java.util.HashMap;
-
+import java.io.InputStreamReader;
+import jakarta.persistence.EntityManager;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 /**
  * 
  * Didactic material to support 
@@ -152,8 +156,21 @@ class UI
     private static final int TAB_SIZE = 24;
 
     private void createCostumer() {
-        // TODO
-        System.out.println("createCostumer()");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        try{
+            System.out.println("Name?");
+            String name = reader.readLine();
+            System.out.println("Email?");
+            String email = reader.readLine();
+            System.out.println("NIF?");
+            String taxnr = reader.readLine();
+        }catch(IOException e){
+            e.printStackTrace();
+        } finally {
+
+        }
+
+
     }
   
     private void listCostumer()
