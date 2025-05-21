@@ -4,18 +4,17 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "STATION")
+@Table(name = "station")
 public class Station {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @Column(precision = 6, scale = 4, nullable = false)
-    private BigDecimal latitude;
+    private String location;
 
-    @Column(precision = 6, scale = 4, nullable = false)
-    private BigDecimal longitude;
+    @Column(name = "max_docks", nullable = false)
+    private int maxDocks;
 
-    // Getters and Setters
+    // Getters and setters
 }

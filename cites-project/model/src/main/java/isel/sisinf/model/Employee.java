@@ -2,21 +2,22 @@ package isel.sisinf.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
-@Table(name = "EMPLOYEE")
+@Table(name = "employee")
 public class Employee {
 
     @Id
-    private Integer person;
+    private Long id;
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "person")
-    private Person personEntity;
+    @JoinColumn(name = "id")
+    private Person person;
 
-    @Column(unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer number;
+    @Column(name = "admission_date", nullable = false)
+    private LocalDate admissionDate;
 
-    // Getters and Setters
+    // Getters and setters
 }

@@ -2,25 +2,26 @@ package isel.sisinf.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "CARD")
+@Table(name = "card")
 public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @Column(precision = 4, scale = 2)
-    private BigDecimal credit;
-
-    @ManyToOne
-    @JoinColumn(name = "typeofcard")
-    private TypeOfCard typeOfCard;
-
-    @ManyToOne
-    @JoinColumn(name = "client")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "client_id")
     private Client client;
 
-    // Getters and Setters
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private CardType type;
+
+    @Column(name = "expiration_date", nullable = false)
+    private LocalDate expirationDate;
+
+    // Getters and setters
 }

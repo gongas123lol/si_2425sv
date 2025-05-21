@@ -4,35 +4,30 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "TRAVEL")
-@IdClass(TravelId.class)
+@Table(name = "travel")
 public class Travel {
 
     @Id
-    private LocalDateTime dinitial;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "scooter")
-    private Scooter scooter;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "card_id")
+    private Card card;
 
-    private String comment;
+    @Column(name = "start_time", nullable = false)
+    private LocalDateTime startTime;
 
-    private Integer evaluation;
+    @Column(name = "end_time", nullable = false)
+    private LocalDateTime endTime;
 
-    private LocalDateTime dfinal;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "start_dock_id")
+    private Dock startDock;
 
-    @ManyToOne
-    @JoinColumn(name = "client", nullable = false)
-    private Client client;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "end_dock_id")
+    private Dock endDock;
 
-    @ManyToOne
-    @JoinColumn(name = "stinitial", nullable = false)
-    private Station stinitial;
-
-    @ManyToOne
-    @JoinColumn(name = "stfinal")
-    private Station stfinal;
-
-    // Getters and Setters
+    // Getters and setters
 }

@@ -3,23 +3,26 @@ package isel.sisinf.model;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "TOPUP")
-@IdClass(TopUpId.class)
+@Table(name = "topup")
 public class TopUp {
 
     @Id
-    private LocalDateTime dttopup;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "card")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "card_id")
     private Card card;
 
-    @Column(nullable = false, precision = 4, scale = 2)
+    @Column(name = "topup_date", nullable = false)
+    private LocalDate topupDate;
+
+    @Column(nullable = false)
     private BigDecimal value;
 
-    // Getters and Setters
+    // Getters and setters
 }

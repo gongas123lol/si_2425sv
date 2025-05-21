@@ -4,29 +4,20 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "REPLACEMENT")
+@Table(name = "replacement")
 public class Replacement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer number;
+    private Long id;
 
-    @Column(nullable = false)
-    private LocalDateTime dreplacement;
-
-    @Column(length = 8, nullable = false)
-    private String action;
-
-    @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "reporder", referencedColumnName = "dorder"),
-            @JoinColumn(name = "repstation", referencedColumnName = "station")
-    })
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "replacement_order_id")
     private ReplacementOrder replacementOrder;
 
-    @ManyToOne
-    @JoinColumn(name = "employee", nullable = false)
-    private Employee employee;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "dock_id")
+    private Dock dock;
 
-    // Getters and Setters
+    // Getters and setters
 }

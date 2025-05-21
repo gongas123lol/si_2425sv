@@ -4,25 +4,19 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "DOCK")
+@Table(name = "dock")
 public class Dock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer number;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "station", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "station_id")
     private Station station;
 
-    @Column(length = 30, nullable = false)
-    private String state;
+    @Column(name = "has_scooter", nullable = false)
+    private boolean hasScooter;
 
-    @ManyToOne
-    @JoinColumn(name = "scooter")
-    private Scooter scooter;
-
-    private LocalDateTime version;
-
-    // Getters and Setters
+    // Getters and setters
 }

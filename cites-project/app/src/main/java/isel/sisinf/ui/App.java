@@ -164,6 +164,8 @@ class UI
             String email = reader.readLine();
             System.out.println("NIF?");
             String taxnr = reader.readLine();
+
+
         }catch(IOException e){
             e.printStackTrace();
         } finally {

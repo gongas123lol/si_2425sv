@@ -4,19 +4,16 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "CLIENT")
+@Table(name = "client")
 public class Client {
 
     @Id
-    private Integer person;
+    private Long id;
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "person")
-    private Person personEntity;
+    @JoinColumn(name = "id")
+    private Person person;
 
-    @Column(nullable = false)
-    private LocalDateTime dtregister;
-
-    // Getters and Setters
+    // Getters and setters
 }

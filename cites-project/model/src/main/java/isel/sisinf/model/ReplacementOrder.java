@@ -1,25 +1,24 @@
 package isel.sisinf.model;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "REPLACEMENTORDER")
-@IdClass(ReplacementOrderId.class)
+@Table(name = "replacementorder")
 public class ReplacementOrder {
 
     @Id
-    private LocalDateTime dorder;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "station")
-    private Station station;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
-    private LocalDateTime dreplacement;
+    @Column(name = "order_date", nullable = false)
+    private LocalDate orderDate;
 
-    @Column(nullable = false)
-    private Integer roccupation;
-
-    // Getters and Setters
+    // Getters and setters
 }

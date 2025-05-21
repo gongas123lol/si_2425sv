@@ -4,18 +4,16 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "SERVICECOST")
+@Table(name = "servicecost")
 public class ServiceCost {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Not present in SQL, added for JPA
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private CardType type;
 
-    @Column(precision = 3, scale = 2)
-    private BigDecimal unlock = BigDecimal.valueOf(1.00);
+    @Column(nullable = false)
+    private BigDecimal cost;
 
-    @Column(precision = 3, scale = 2)
-    private BigDecimal usable = BigDecimal.valueOf(0.15);
-
-    // Getters and Setters
+    // Getters and setters
 }
