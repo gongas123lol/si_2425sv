@@ -27,6 +27,8 @@ import java.util.Scanner;
 import java.util.HashMap;
 import java.io.InputStreamReader;
 
+import isel.sisinf.jpa.PersonRepository;
+import isel.sisinf.jpa.PersonRepositoryImpl;
 import isel.sisinf.model.Client;
 import isel.sisinf.model.Person;
 import jakarta.persistence.EntityManager;
@@ -162,49 +164,56 @@ class UI
 
     private void createCostumer() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        try{
-            System.out.println("Name?");
+        EntityManagerFactory emf = null;
+        EntityManager em = null;
+
+        try {
+            System.out.println("Nome?");
             String name = reader.readLine();
             System.out.println("Email?");
             String email = reader.readLine();
             System.out.println("NIF?");
             String taxnr = reader.readLine();
-            EntityManagerFactory emf = jakarta.persistence.Persistence.createEntityManagerFactory("citesPU");
-            EntityManager em = emf.createEntityManager();
+
+            emf = jakarta.persistence.Persistence.createEntityManagerFactory("citesPU");
+            em = emf.createEntityManager();
+
+            PersonRepository personRepository = new PersonRepositoryImpl(em);
 
             em.getTransaction().begin();
 
-            // Create person and client
+            // Criar person com todos os campos necessários
             Person person = new Person();
             person.setName(name);
             person.setEmail(email);
             person.setNIF(taxnr);
-            //person.setPhoneNumber(phone);
-            //person.setAddress(address);
+            person.setJoinDate(java.time.LocalDate.now());
 
+            // Salvar person usando o repository
+            personRepository.save(person);
+
+            // Criar e salvar client
             Client client = new Client();
-            //client.setPerson(person);
-
-            em.persist(person);
+            client.setPerson(person);
             em.persist(client);
 
             em.getTransaction().commit();
+            System.out.println("Cliente criado com sucesso!");
 
-            em.close();
-            emf.close();
-
-            System.out.println("Client successfully created!");
-
-
-        }catch(IOException e){
-            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Erro ao ler dados do usuário: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro ao criar cliente: " + e.getMessage());
+            if (em != null && em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
         } finally {
-
+            if (em != null) em.close();
+            if (emf != null) emf.close();
         }
-
-
     }
-  
+
+
     private void listCostumer()
     {
         // TODO

@@ -9,8 +9,11 @@ import java.util.Optional;
 
 public class PersonRepositoryImpl implements PersonRepository {
 
-    @PersistenceContext
-    private EntityManager em;
+    private final EntityManager em;
+
+    public PersonRepositoryImpl(EntityManager em) {
+        this.em = em;
+    }
 
     @Override
     public Optional<Person> findById(Long id) {
