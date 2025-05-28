@@ -19,11 +19,15 @@ public class Scooter {
     private BigDecimal maxvelocity;
 
     @Column(nullable = false)
-    private Integer battery;
+    private Integer Autonomy;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "model", referencedColumnName = "number")
     private ScooterModel model;
+    // The manufacture's name is in the Model table
+
+    @Column(nullable = false)
+    private Double price;
 
     private LocalDateTime version;
 
@@ -53,12 +57,12 @@ public class Scooter {
         this.maxvelocity = maxvelocity;
     }
 
-    public Integer getBattery() {
-        return battery;
+    public Integer getAutonomy() {
+        return Autonomy;
     }
 
-    public void setBattery(Integer battery) {
-        this.battery = battery;
+    public void setAutonomy(Integer Autonomy) {
+        this.Autonomy = Autonomy;
     }
 
     public ScooterModel getModel() {

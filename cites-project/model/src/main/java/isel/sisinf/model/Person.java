@@ -14,40 +14,31 @@ public class Person {
 
     private String name;
 
-    @Column(name = "cc_number", unique = true, nullable = false, length = 8)
-    private String ccNumber;
+    @Column(name = "nif", unique = true, nullable = false, length = 9)
+    private String nif;
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "nif", unique = true, nullable = false, length = 9)
-    private String nif;
-
-    @Column(name = "birth_date", nullable = false)
-    private LocalDate birthDate;
+    @Column(name = "join_date", nullable = false)
+    private LocalDate joinDate;
 
     public Long getId() {
         return id;
     }
-    public String getCcNumber(){
-        return ccNumber;
-    }
     public String getNIF(){
         return nif;
     }
-    public LocalDate getBirthDate(){
-        return birthDate;
+    public LocalDate getJoinDate(){
+        return joinDate;
     }
 
-    public void setCcNumber(String ccNumber) {
-        this.ccNumber = ccNumber;
-    }
     public void setName(String name){
         this.name = name;
     }
 
-    public void setBirthDate(LocalDate date){
-        this.birthDate = date;
+    public void setJoinDate(LocalDate date){
+        this.joinDate = date;
     }
     public void setNIF(String nif){
         this.nif = nif;

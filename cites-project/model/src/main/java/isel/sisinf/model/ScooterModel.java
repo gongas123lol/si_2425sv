@@ -14,8 +14,11 @@ public class ScooterModel {
     @Column(length = 30, nullable = false)
     private String designation;
 
+    @Column(length = 30, nullable = false)
+    private String make;
+
     @Column(nullable = false)
-    private Integer autonomy;
+    private Integer stockAutonomy;
 
     @OneToMany(mappedBy = "model")
     private List<Scooter> scooters;
@@ -38,12 +41,20 @@ public class ScooterModel {
         this.designation = designation;
     }
 
-    public Integer getAutonomy() {
-        return autonomy;
+    public String getMake() {
+        return make;
     }
 
-    public void setAutonomy(Integer autonomy) {
-        this.autonomy = autonomy;
+    public void setMake(String make) {
+        this.make = make;
+    }
+
+    public Integer getStockAutonomy() {
+        return stockAutonomy;
+    }
+
+    public void setStockAutonomy(Integer autonomy) {
+        this.stockAutonomy = autonomy;
     }
 
     public List<Scooter> getScooters() {
