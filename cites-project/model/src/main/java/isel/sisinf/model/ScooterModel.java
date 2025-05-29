@@ -24,7 +24,6 @@ public class ScooterModel {
     private List<Scooter> scooters;
 
     // Getters and Setters
-
     public Integer getNumber() {
         return number;
     }

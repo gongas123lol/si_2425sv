@@ -23,12 +23,15 @@ public class Person {
     @Column(name = "join_date", nullable = false)
     private LocalDate joinDate;
 
+    // Getters and setters
     public Long getId() {
         return id;
     }
+
     public String getNIF(){
         return nif;
     }
+
     public LocalDate getJoinDate(){
         return joinDate;
     }
@@ -40,6 +43,7 @@ public class Person {
     public void setJoinDate(LocalDate date){
         this.joinDate = date;
     }
+
     public void setNIF(String nif){
         this.nif = nif;
     }
@@ -47,6 +51,7 @@ public class Person {
     public void setEmail(String email) {
         this.email = email;
     }
+
     public String getEmail(){
         return this.email;
     }

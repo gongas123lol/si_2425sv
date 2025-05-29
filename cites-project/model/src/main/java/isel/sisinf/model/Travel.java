@@ -30,4 +30,51 @@ public class Travel {
     private Dock endDock;
 
     // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public Dock getStartDock() {
+        return startDock;
+    }
+
+    public void setStartDock(Dock startDock) {
+        this.startDock = startDock;
+    }
+
+    public Dock getEndDock() {
+        return endDock;
+    }
+
+    public void setEndDock(Dock endDock) {
+        this.endDock = endDock;
+    }
 }

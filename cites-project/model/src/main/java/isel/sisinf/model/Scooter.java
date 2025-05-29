@@ -16,7 +16,7 @@ public class Scooter {
     private BigDecimal weight;
 
     @Column(nullable = false, precision = 4, scale = 2)
-    private BigDecimal maxvelocity;
+    private BigDecimal maxVelocity;
 
     @Column(nullable = false)
     private Integer Autonomy;
@@ -32,7 +32,6 @@ public class Scooter {
     private LocalDateTime version;
 
     // Getters and Setters
-
     public Integer getId() {
         return id;
     }
@@ -49,12 +48,12 @@ public class Scooter {
         this.weight = weight;
     }
 
-    public BigDecimal getMaxvelocity() {
-        return maxvelocity;
+    public BigDecimal getMaxVelocity() {
+        return maxVelocity;
     }
 
-    public void setMaxvelocity(BigDecimal maxvelocity) {
-        this.maxvelocity = maxvelocity;
+    public void setMaxVelocity(BigDecimal maxVelocity) {
+        this.maxVelocity = maxVelocity;
     }
 
     public Integer getAutonomy() {

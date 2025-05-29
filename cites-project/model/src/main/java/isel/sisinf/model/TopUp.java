@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "topup")
@@ -19,10 +18,41 @@ public class TopUp {
     private Card card;
 
     @Column(name = "topup_date", nullable = false)
-    private LocalDate topupDate;
+    private LocalDate topUpDate;
 
     @Column(nullable = false)
     private BigDecimal value;
 
     // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
+    }
+
+    public LocalDate getTopUpDate() {
+        return topUpDate;
+    }
+
+    public void setTopUpDate(LocalDate topUpDate) {
+        this.topUpDate = topUpDate;
+    }
+
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    public void setValue(BigDecimal value) {
+        this.value = value;
+    }
 }

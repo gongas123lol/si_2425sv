@@ -1,7 +1,6 @@
 package isel.sisinf.model;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "station")
@@ -17,4 +16,27 @@ public class Station {
     private int maxDocks;
 
     // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public int getMaxDocks() {
+        return maxDocks;
+    }
+
+    public void setMaxDocks(int maxDocks) {
+        this.maxDocks = maxDocks;
+    }
 }

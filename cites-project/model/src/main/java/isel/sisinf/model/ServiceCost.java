@@ -16,4 +16,19 @@ public class ServiceCost {
     private BigDecimal cost;
 
     // Getters and setters
+    public CardType getType() {
+        return type;
+    }
+
+    public void setType(CardType type) {
+        this.type = type;
+    }
+
+    public BigDecimal getCost() {
+        return cost;
+    }
+
+    public void setCost(BigDecimal cost) {
+        this.cost = cost;
+    }
 }

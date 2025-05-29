@@ -1,7 +1,6 @@
 package isel.sisinf.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "replacement")
@@ -20,4 +19,27 @@ public class Replacement {
     private Dock dock;
 
     // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public ReplacementOrder getReplacementOrder() {
+        return replacementOrder;
+    }
+
+    public void setReplacementOrder(ReplacementOrder replacementOrder) {
+        this.replacementOrder = replacementOrder;
+    }
+
+    public Dock getDock() {
+        return dock;
+    }
+
+    public void setDock(Dock dock) {
+        this.dock = dock;
+    }
 }
