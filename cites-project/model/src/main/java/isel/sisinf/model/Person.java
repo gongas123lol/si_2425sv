@@ -1,63 +1,47 @@
 package isel.sisinf.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.*;
-
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "person")
 public class Person {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;  // Changed to Integer to match serial
 
     private String name;
 
-    @Column(name = "nif", unique = true, nullable = false, length = 9)
-    private String nif;
+    @Column(name = "taxnumber", unique = true)
+    private Integer taxNumber;  // Changed to match database column
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "join_date", nullable = false)
-    private LocalDate joinDate;
+    // Remove joinDate as it doesn't exist in the database
 
-    // Getters and setters
-    public Long getId() {
+    // Update getters and setters
+    public Integer getId() {
         return id;
     }
 
-    public String getNIF(){
-        return nif;
+    public Integer getTaxNumber() {
+        return taxNumber;
     }
 
-    public LocalDate getJoinDate(){
-        return joinDate;
+    public void setTaxNumber(Integer taxNumber) {
+        this.taxNumber = taxNumber;
     }
 
     public void setName(String name){
         this.name = name;
     }
 
-    public void setJoinDate(LocalDate date){
-        this.joinDate = date;
-    }
-
-    public void setNIF(String nif){
-        this.nif = nif;
-    }
-
-    public void setEmail(String email) {
+    public void setEmail(String email){
         this.email = email;
     }
 
-    public String getEmail(){
-        return this.email;
-    }
-
-    public String getName() {
-        return this.name;
-    }
+    // ... other getters and setters ...
 }
-

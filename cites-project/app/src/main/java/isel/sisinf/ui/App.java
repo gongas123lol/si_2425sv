@@ -32,6 +32,7 @@ import isel.sisinf.jpa.PersonRepository;
 import isel.sisinf.jpa.PersonRepositoryImpl;
 import isel.sisinf.model.Client;
 import isel.sisinf.model.Person;
+import isel.sisinf.services.ClientServices;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
@@ -174,31 +175,22 @@ class UI
             System.out.println("Email?");
             String email = reader.readLine();
             System.out.println("NIF?");
-            String taxnr = reader.readLine();
+            String taxnrStr = reader.readLine();
+            Integer taxnr = Integer.valueOf(taxnrStr);
 
+            /* Bootstrap JPA */
             emf = jakarta.persistence.Persistence.createEntityManagerFactory("citesPU");
-            em = emf.createEntityManager();
+            em  = emf.createEntityManager();
 
+            /* Repositories & services */
             PersonRepository personRepository = new PersonRepositoryImpl(em);
+            ClientServices   clientService = new ClientServices(personRepository, em);
 
+            /* Manual transaction boundaries because we are outside a container */
             em.getTransaction().begin();
-
-            // Criar person com todos os campos necessários
-            Person person = new Person();
-            person.setName(name);
-            person.setEmail(email);
-            person.setNIF(taxnr);
-            person.setJoinDate(java.time.LocalDate.now());
-
-            // Salvar person usando o repository
-            personRepository.save(person);
-
-            // Criar e salvar client
-            Client client = new Client();
-            client.setPerson(person);
-            em.persist(client);
-
+            clientService.createPersonAndClient(name, email, taxnr);
             em.getTransaction().commit();
+
             System.out.println("Cliente criado com sucesso!");
 
         } catch (IOException e) {
@@ -215,11 +207,13 @@ class UI
     }
 
 
-private void listCostumer() {
+
+    private void listCostumer() {
     EntityManagerFactory emf = null;
     EntityManager em = null;
     
     try {
+        /*
         emf = jakarta.persistence.Persistence.createEntityManagerFactory("citesPU");
         em = emf.createEntityManager();
 
@@ -234,13 +228,14 @@ private void listCostumer() {
             for (Person user : users) {
                 System.out.printf("ID: %-5d | NIF: %-12s | Name: %-20s | Join Date: %s%n",
                     user.getId(),
-                    user.getNIF(),
+                    user.getTaxNumber(),
                     user.getName(),
                     user.getJoinDate().toString());
             }
             System.out.println("----------------------------------------");
             System.out.println("Total customers: " + users.size());
         }
+         */
     } catch (Exception e) {
         System.out.println("Error listing customers: " + e.getMessage());
     } finally {

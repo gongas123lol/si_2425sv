@@ -2,30 +2,30 @@ package isel.sisinf.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "client")
 public class Client {
-
     @Id
-    private Long id;
-
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "person")
     private Person person;
 
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "dtregister", nullable = false)
+    private LocalDateTime dtRegister;
 
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
+    public void setPerson(Person person){
         this.person = person;
     }
+    public Person getPerson(){
+        return this.person;
+    }
 
-    public void setId(Long id) {this.id = id;}
+    public void setDtRegister(LocalDateTime date){
+        this.dtRegister = date;
+    }
+    public LocalDateTime getDtRegister(){
+        return this.dtRegister;
+    }
 }
