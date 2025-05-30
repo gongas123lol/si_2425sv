@@ -25,6 +25,7 @@ public class Client {
     public void setDtRegister(LocalDateTime date){
         this.dtRegister = date;
     }
+
     public LocalDateTime getDtRegister(){
         return this.dtRegister;
     }

@@ -28,6 +28,8 @@ import java.util.Scanner;
 import java.util.HashMap;
 import java.io.InputStreamReader;
 
+import isel.sisinf.jpa.ClientRepository;
+import isel.sisinf.jpa.ClientRepositoryImpl;
 import isel.sisinf.jpa.PersonRepository;
 import isel.sisinf.jpa.PersonRepositoryImpl;
 import isel.sisinf.model.Client;
@@ -178,15 +180,13 @@ class UI
             String taxnrStr = reader.readLine();
             Integer taxnr = Integer.valueOf(taxnrStr);
 
-            /* Bootstrap JPA */
             emf = jakarta.persistence.Persistence.createEntityManagerFactory("citesPU");
             em  = emf.createEntityManager();
 
-            /* Repositories & services */
             PersonRepository personRepository = new PersonRepositoryImpl(em);
-            ClientServices   clientService = new ClientServices(personRepository, em);
+            ClientRepository clientRepository = new ClientRepositoryImpl(em);
+            ClientServices   clientService = new ClientServices(personRepository,clientRepository, em);
 
-            /* Manual transaction boundaries because we are outside a container */
             em.getTransaction().begin();
             clientService.createPersonAndClient(name, email, taxnr);
             em.getTransaction().commit();
@@ -213,29 +213,32 @@ class UI
     EntityManager em = null;
     
     try {
-        /*
+
         emf = jakarta.persistence.Persistence.createEntityManagerFactory("citesPU");
         em = emf.createEntityManager();
 
         PersonRepository personRepository = new PersonRepositoryImpl(em);
-        List<Person> users = personRepository.findAll();
+        ClientRepository clientRepository = new ClientRepositoryImpl(em);
+
+        ClientServices clientServices = new ClientServices(personRepository,clientRepository,em);
+        List<Client> users = clientServices.listClient();
 
         if (users.isEmpty()) {
             System.out.println("No customers found.");
         } else {
             System.out.println("Customer List:");
             System.out.println("----------------------------------------");
-            for (Person user : users) {
+            for (Client user : users) {
                 System.out.printf("ID: %-5d | NIF: %-12s | Name: %-20s | Join Date: %s%n",
-                    user.getId(),
-                    user.getTaxNumber(),
-                    user.getName(),
-                    user.getJoinDate().toString());
+                    user.getPerson().getId(),
+                    user.getPerson().getTaxNumber(),
+                    user.getPerson().getName(),
+                    user.getDtRegister().toString());
             }
             System.out.println("----------------------------------------");
             System.out.println("Total customers: " + users.size());
         }
-         */
+
     } catch (Exception e) {
         System.out.println("Error listing customers: " + e.getMessage());
     } finally {

@@ -1,5 +1,6 @@
 package isel.sisinf.services;
 
+import isel.sisinf.jpa.ClientRepository;
 import isel.sisinf.jpa.PersonRepository;
 import isel.sisinf.model.Client;
 import isel.sisinf.model.Person;
@@ -8,22 +9,25 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ClientServices {
 
     private final PersonRepository personRepo;
-
+    private final ClientRepository clientRepo;
     @PersistenceContext
     private EntityManager em;        // injected by container or supplied manually
 
     /* Constructor used inside managed environments (EntityManager injected). */
-    public ClientServices(PersonRepository personRepo) {
+    public ClientServices(PersonRepository personRepo, ClientRepository clientRepo) {
         this.personRepo = personRepo;
+        this.clientRepo = clientRepo;
     }
 
     /* Convenience constructor for plain Java / CLI apps. */
-    public ClientServices(PersonRepository personRepo, EntityManager em) {
+    public ClientServices(PersonRepository personRepo, ClientRepository clientRepo, EntityManager em) {
         this.personRepo = personRepo;
+        this.clientRepo = clientRepo;
         this.em = em;
     }
 
@@ -59,5 +63,10 @@ public class ClientServices {
         em.persist(client);
 
         return client;                            // managed instance
+    }
+
+    @Transactional
+    public List<Client> listClient(){
+        return clientRepo.findAll();
     }
 }

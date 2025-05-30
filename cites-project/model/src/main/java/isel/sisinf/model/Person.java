@@ -43,5 +43,7 @@ public class Person {
         this.email = email;
     }
 
-    // ... other getters and setters ...
+    public String getName(){
+        return this.name;
+    }
 }
