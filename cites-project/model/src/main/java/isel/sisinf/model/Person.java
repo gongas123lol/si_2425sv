@@ -55,5 +55,9 @@ public class Person {
     public String getEmail(){
         return this.email;
     }
+
+    public String getName() {
+        return this.name;
+    }
 }
 

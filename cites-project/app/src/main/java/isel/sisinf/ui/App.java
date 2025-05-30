@@ -23,6 +23,7 @@ SOFTWARE.
 */
 package isel.sisinf.ui;
 
+import java.util.List;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.io.InputStreamReader;
@@ -214,11 +215,39 @@ class UI
     }
 
 
-    private void listCostumer()
-    {
-        // TODO
-        System.out.println("listCostumer()");
+private void listCostumer() {
+    EntityManagerFactory emf = null;
+    EntityManager em = null;
+    
+    try {
+        emf = jakarta.persistence.Persistence.createEntityManagerFactory("citesPU");
+        em = emf.createEntityManager();
+
+        PersonRepository personRepository = new PersonRepositoryImpl(em);
+        List<Person> users = personRepository.findAll();
+
+        if (users.isEmpty()) {
+            System.out.println("No customers found.");
+        } else {
+            System.out.println("Customer List:");
+            System.out.println("----------------------------------------");
+            for (Person user : users) {
+                System.out.printf("ID: %-5d | NIF: %-12s | Name: %-20s | Join Date: %s%n",
+                    user.getId(),
+                    user.getNIF(),
+                    user.getName(),
+                    user.getJoinDate().toString());
+            }
+            System.out.println("----------------------------------------");
+            System.out.println("Total customers: " + users.size());
+        }
+    } catch (Exception e) {
+        System.out.println("Error listing customers: " + e.getMessage());
+    } finally {
+        if (em != null) em.close();
+        if (emf != null) emf.close();
     }
+}
 
     private void listDocks()
     {
