@@ -34,7 +34,6 @@ AS $$
             RAISE EXCEPTION 'Scooter % is not in any dock %', scooterId, stId;
         END IF;
         ---------------------------------------------------------------------------
-        -- TODO(): CHECK IF EXTRA STEP ON STATION IS NEEDED
         SELECT INTO STRICT stationInfo * FROM station WHERE station.id = stId;
         IF NOT FOUND THEN
             RAISE EXCEPTION 'Station % does not exist', stId;
@@ -55,7 +54,7 @@ AS $$
     DECLARE
         scooterInfo scooter%rowtype;
         clientInfo client%rowtype;
-        RS SETOF travel%rowtype;
+        travelInfo SETOF travel%rowtype;
     BEGIN
         SELECT INTO STRICT scooterInfo * FROM scooter WHERE scooter.id = scooterId;
         IF NOT FOUND THEN
@@ -65,8 +64,8 @@ AS $$
         IF NOT FOUND THEN
             RAISE EXCEPTION 'Client % does not exist', clientId;
         END IF;
-        SELECT INTO RS * FROM travel WHERE travel.scooter = scooterId AND travel.client = clientId AND travel.dfinal IS NULL;
-        IF COUNT(RS) > 1 THEN
+        SELECT INTO travelInfo * FROM travel WHERE travel.scooter = scooterId AND travel.client = clientId AND travel.dfinal IS NULL;
+        IF COUNT(travelInfo) >= 1 THEN
             RAISE EXCEPTION 'Scooter % and client % are already in an active trip', scooterId, clientId;
         END IF;
     END;
@@ -103,20 +102,26 @@ FROM CLIENT c INNER JOIN PERSON p ON (c.person=p.id)
 CREATE OR REPLACE FUNCTION insert_rider()
 RETURNS trigger AS
 $$
+DECLARE
+    person_id INTEGER;
+    rider RIDER%ROWTYPE;
 BEGIN
     -- Inserir na tabela base PERSON
-    INSERT INTO PERSON(id, name, email, address, phoneNumber, taxNumber)
-    VALUES (NEW.id, NEW.name, NEW.email, NEW.address, NEW.phoneNumber, NEW.taxNumber);
+    INSERT INTO PERSON(name, email, taxNumber)
+    VALUES (NEW.name, NEW.email, NEW.taxNumber);
+
+    SELECT INTO STRICT person_id id FROM PERSON WHERE taxNumber = NEW.taxNumber;
 
     -- Inserir na CLIENT
     INSERT INTO CLIENT(person, dtregister)
-    VALUES (NEW.id, NEW.dtregister);
+    VALUES (person_id, NEW.dtregister);
 
     -- Inserir na CARD
-    INSERT INTO CARD(id, client, credit, typeofcard)
-    VALUES (NEW.cardid, NEW.id, NEW.credit, NEW.typeofcard);
+    INSERT INTO CARD(client, credit, typeofcard)
+    VALUES (person_id, NEW.credit, NEW.typeofcard);
 
-    RETURN NEW;
+    SELECT INTO rider * FROM RIDER WHERE taxnumber = NEW.taxNumber;
+    RETURN rider;
 END;
 $$ LANGUAGE plpgsql;
 ---------------------------------------------------
@@ -128,8 +133,6 @@ BEGIN
     UPDATE PERSON
     SET name = NEW.name,
         email = NEW.email,
-        address = NEW.address,
-        phoneNumber = NEW.phoneNumber,
         taxNumber = NEW.taxNumber
     WHERE id = OLD.id;
 
@@ -148,12 +151,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 ---------------------------------------------------------
-CREATE TRIGGER rider_insert
+CREATE OR REPLACE TRIGGER rider_insert
 INSTEAD OF INSERT ON RIDER
 FOR EACH ROW
 EXECUTE FUNCTION insert_rider();
 
-CREATE TRIGGER rider_update
+CREATE OR REPLACE TRIGGER rider_update
 INSTEAD OF UPDATE ON RIDER
 FOR EACH ROW
 EXECUTE FUNCTION update_rider();
