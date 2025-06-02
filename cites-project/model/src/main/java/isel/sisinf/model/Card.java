@@ -22,6 +22,9 @@ public class Card {
     @Column(name = "expiration_date", nullable = false)
     private LocalDate expirationDate;
 
+    @Column
+    private Float credit;
+
     // Getters and setters
     public Long getId() {
         return id;
@@ -30,6 +33,10 @@ public class Card {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public Float getCredit() { return credit; }
+
+    public void setCredit(Float credit) { this.credit = credit; }
 
     public Client getClient() {
         return client;
