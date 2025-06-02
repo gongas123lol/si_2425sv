@@ -37,5 +37,6 @@ public interface IContext extends AutoCloseable {
 	 IClientRepository getClients();
 	 IDockRepository getDocks();
 	 IPersonRepository getPersons();
+	 IRiderRepository getRiders();
      
 }

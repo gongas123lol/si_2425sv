@@ -26,6 +26,7 @@ package isel.sisinf.repo;
 import isel.sisinf.model.Client;
 import isel.sisinf.model.Dock;
 import isel.sisinf.model.Person;
+import isel.sisinf.model.Rider;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import org.eclipse.persistence.sessions.DatabaseLogin;
@@ -46,6 +47,7 @@ public class JPAContext implements IContext {
     private IClientRepository _clientRepository;
     private IDockRepository _dockRepository;
     private IPersonRepository _personRepository;
+    private IRiderRepository _riderRepository;
 
     /// HELPER METHODS
     protected List helperQueryImpl(String jpql, Object... params) {
@@ -107,9 +109,9 @@ public class JPAContext implements IContext {
 
         @Override
         public void deleteById(Long id) {
-            Person person = em.find(Person.class, id);
-            if (person != null) {
-                em.remove(person);
+            Dock dock = em.find(Dock.class, id);
+            if (dock != null) {
+                em.remove(dock);
             }
         }
     }
@@ -209,6 +211,42 @@ public class JPAContext implements IContext {
         }
     }
 
+    protected class RiderRepository implements IRiderRepository {
+
+        private final EntityManager em;
+
+        public RiderRepository(EntityManager em) {
+            this.em = em;
+        }
+
+        @Override
+        public Optional<Rider> findById(Long id) {
+            return Optional.ofNullable(em.find(Rider.class, id));
+        }
+
+        @Override
+        public List<Rider> findAll() {
+            return em.createQuery("SELECT r FROM Rider r", Rider.class).getResultList();
+        }
+
+        @Override
+        public void save(Rider rider) {
+            if (rider.getId() == null) {
+                em.persist(rider);
+            } else {
+                em.merge(rider);
+            }
+        }
+
+        @Override
+        public void deleteById(Long id) {
+            Rider rider = em.find(Rider.class, id);
+            if (rider != null) {
+                em.remove(rider);
+            }
+        }
+    }
+
     @Override
     public void beginTransaction() {
         if (_tx == null) {
@@ -303,6 +341,11 @@ public class JPAContext implements IContext {
     @Override
     public IPersonRepository getPersons() {
         return _personRepository;
+    }
+
+    @Override
+    public IRiderRepository getRiders() {
+        return _riderRepository;
     }
 
     /// functions and stored procedure
