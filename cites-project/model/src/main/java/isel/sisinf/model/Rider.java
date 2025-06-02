@@ -1,86 +1,144 @@
 package isel.sisinf.model;
 
 import jakarta.persistence.*;
-
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Entidade que representa um cliente “Rider”.
+ */
 @Entity
 @Table(name = "rider")
 public class Rider {
+
+    /* --------------------  Campos persistidos -------------------- */
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;  // Changed to Integer to match serial
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "taxnumber", unique = true)
-    private Integer taxNumber;  // Changed to match database column
+    @Column(name = "taxnumber", nullable = false)
+    private Integer taxNumber;
 
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "dtregister", nullable = false)
     private LocalDateTime dtRegister;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cardid")
-    private Long cardId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cardid")
+    private Card card;
 
-    @Column
-    private Float credit;
+    @Column(name = "credit", nullable = false)
+    private BigDecimal credit;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
-    private CardType type;
+    /* coluna real na BD (“resident” / “tourist”) */
+    @Column(name = "typeofcard", nullable = false)
+    private String typeOfCardDb;
 
-    // Getters and setters
-    public Integer getId() {
+    /* --------------------  Campo de conveniência -------------------- */
+
+    @Transient
+    private CardType typeOfCard;
+
+    /* --------------------  Callbacks JPA -------------------- */
+
+    @PostLoad
+    private void syncEnumAfterLoad() {
+        this.typeOfCard = typeOfCardDb == null
+                ? null
+                : CardType.fromDb(typeOfCardDb);
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void syncDbBeforeSave() {
+        this.typeOfCardDb = typeOfCard == null
+                ? null
+                : typeOfCard.getDbValue();
+    }
+
+    /* --------------------  Getters e Setters -------------------- */
+
+    public Long getId() {
         return id;
     }
 
-    public Integer getTaxNumber() { return taxNumber; }
-
-    public void setTaxNumber(Integer newTaxNumber) {
-        this.taxNumber = newTaxNumber;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setName(String newName){
-        this.name = newName;
+    public String getEmail() {
+        return email;
     }
 
-    public void setEmail(String newEmail){
-        this.email = newEmail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getName(){
-        return this.name;
+    public Integer getTaxNumber() {
+        return taxNumber;
     }
 
-    public void setDtRegister(LocalDateTime newDate){
-        this.dtRegister = newDate;
+    public void setTaxNumber(Integer taxNumber) {
+        this.taxNumber = taxNumber;
     }
 
-    public LocalDateTime getDtRegister(){
-        return this.dtRegister;
+    public String getName() {
+        return name;
     }
 
-    public Long getCardId() {
-        return cardId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setCardId(Long newCardId) {
-        this.cardId = newCardId;
+    public LocalDateTime getDtRegister() {
+        return dtRegister;
     }
 
-    public Float getCredit() { return credit; }
-
-    public void setCredit(Float newCredit) { this.credit = newCredit; }
-
-    public CardType getType() {
-        return type;
+    public void setDtRegister(LocalDateTime dtRegister) {
+        this.dtRegister = dtRegister;
     }
 
-    public void setType(CardType newType) {
-        this.type = newType;
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
+    }
+
+    public BigDecimal getCredit() {
+        return credit;
+    }
+
+    public void setCredit(BigDecimal credit) {
+        this.credit = credit;
+    }
+
+    /**
+     * Getter preferido pela aplicação (enum).
+     */
+    public CardType getTypeOfCard() {
+        return typeOfCard;
+    }
+
+    public void setTypeOfCard(CardType typeOfCard) {
+        this.typeOfCard = typeOfCard;
+    }
+
+    /* Getter opcional para depuração – devolve o valor cru gravado na BD. */
+    protected String getTypeOfCardDb() {
+        return typeOfCardDb;
+    }
+
+    /* Setter protegido: a camada de persistência pode precisar. */
+    protected void setTypeOfCardDb(String typeOfCardDb) {
+        this.typeOfCardDb = typeOfCardDb;
     }
 }

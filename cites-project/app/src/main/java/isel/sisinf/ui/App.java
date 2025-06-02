@@ -208,46 +208,35 @@ class UI
     }
 
 
-
     private void listCostumer() {
-    EntityManagerFactory emf = null;
-    EntityManager em = null;
-    
-    try {
-
-        emf = jakarta.persistence.Persistence.createEntityManagerFactory("citesPU");
-        em = emf.createEntityManager();
-
         try (JPAContext ctx = new JPAContext()) {
-            IPersonRepository personRepository = ctx.getPersons();
-            IClientRepository clientRepository = ctx.getClients();
 
-        ClientServices clientServices = new ClientServices(personRepository,clientRepository,em);
-        List<Client> users = clientServices.listClient();
+            var riders = ctx.getRiders().findAll();
 
-        if (users.isEmpty()) {
-            System.out.println("No customers found.");
-        } else {
-            System.out.println("Customer List:");
-            System.out.println("----------------------------------------");
-            for (Client user : users) {
-                System.out.printf("ID: %-5d | NIF: %-12s | Name: %-20s | Join Date: %s%n",
-                    user.getPerson().getId(),
-                    user.getPerson().getTaxNumber(),
-                    user.getPerson().getName(),
-                    user.getDtRegister().toString());
+            if (riders.isEmpty()) {
+                System.out.println("Não existem utilizadores registados.");
+            } else {
+                System.out.println("Id | Nome | Email | NIF | Data Registo | Cartão | Crédito");
+                for (var r : riders) {
+                    System.out.println(
+                            r.getId()        + " | " +
+                            r.getName()      + " | " +
+                            r.getEmail()     + " | " +
+                            r.getTaxNumber() + " | " +
+                            r.getDtRegister()+ " | " +
+                            r.getCard()      + " | " +
+                            r.getCredit()
+                    );
+                }
             }
-            System.out.println("----------------------------------------");
-            System.out.println("Total customers: " + users.size());
+
+        } catch (Exception ex) {
+            System.out.println("Erro ao listar utilizadores: " + ex.getMessage());
+        } finally {
+            System.out.println("\nPrima ENTER para continuar...");
+            new Scanner(System.in).nextLine();
         }
-        }
-    } catch (Exception e) {
-        System.out.println("Error listing customers: " + e.getMessage());
-    } finally {
-        if (em != null) em.close();
-        if (emf != null) emf.close();
     }
-}
 
     private void listDocks()
     {

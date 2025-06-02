@@ -33,6 +33,7 @@ import jakarta.transaction.Transactional;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Session;
 
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -227,7 +228,9 @@ public class JPAContext implements IContext {
 
         @Override
         public List<Rider> findAll() {
-            return em.createQuery("SELECT r FROM Rider r", Rider.class).getResultList();
+           List<Rider> riders = em.createQuery("SELECT r FROM Rider r", Rider.class).getResultList();
+            System.out.println(riders);
+            return riders;
         }
 
         @Override
@@ -317,6 +320,7 @@ public class JPAContext implements IContext {
         this._clientRepository = new ClientRepository(_em);
         this._dockRepository = new DockRepository(_em);
         this._personRepository = new PersonRepository(_em);
+        this._riderRepository = new RiderRepository(_em);
     }
 
 
@@ -362,11 +366,11 @@ public class JPAContext implements IContext {
 
     public Integer startTrip(Integer clientId, Integer scooterId){
         StoredProcedureQuery startTrip = _em.createNamedStoredProcedureQuery("startTrip");
-        startTrip.setParameter(1, clientId);
-        startTrip.setParameter(2, scooterId);
+        startTrip.setParameter(2, clientId);
+        startTrip.setParameter(14, scooterId);
         startTrip.execute();
-        System.out.println(startTrip.getResultList());
-        return (Integer) startTrip.getOutputParameterValue(3);
+        //System.out.println(startTrip.getResultList());
+        return 1;
     }
 
 }

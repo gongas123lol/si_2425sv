@@ -9,6 +9,9 @@
         <!-- List your entity classes here -->
         <class>isel.sisinf.model.Person</class>
         <class>isel.sisinf.model.Client</class>
+        <class>isel.sisinf.model.Rider</class>
+        <class>isel.sisinf.model.Card</class>
+        <class>isel.sisinf.model.CardType</class>
 
         <properties>
             <!-- Database connection settings -->
@@ -19,8 +22,8 @@
 
             <!-- Hibernate properties -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-            <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.format_sql" value="false"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
         </properties>
     </persistence-unit>
