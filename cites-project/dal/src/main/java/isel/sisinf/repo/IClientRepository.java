@@ -1,12 +1,11 @@
-package isel.sisinf.jpa;
+package isel.sisinf.repo;
 
 import isel.sisinf.model.Client;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ClientRepository {
-
+public interface IClientRepository {
     Optional<Client> findById(Long id);
     List<Client> findAll();
     void save(Client client);

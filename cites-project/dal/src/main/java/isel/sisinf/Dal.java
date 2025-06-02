@@ -21,11 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package isel.sisinf.jpa;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import java.util.List;
+package isel.sisinf;
 
 public class Dal
 {

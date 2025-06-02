@@ -23,39 +23,29 @@ SOFTWARE.
 */
 package isel.sisinf.repo;
 
-import isel.sisinf.dal.lab.Course;
-import isel.sisinf.dal.lab.Student;
+import isel.sisinf.model.Client;
+import isel.sisinf.model.Dock;
+import isel.sisinf.model.Person;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Session;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
-//o)Why this code here do not work?
-/*@NamedStoredProcedureQuery(
-	    name = "namedrand_fx", 
-	    procedureName = "rand_fx", 
-	    parameters = { 
-	        @StoredProcedureParameter(mode = ParameterMode.IN, type = Integer.class), 
-	        @StoredProcedureParameter(mode = ParameterMode.OUT, type = Number.class)
-	    }
-	)
-*/
 public class JPAContext implements IContext {
 
 
     private EntityManagerFactory _emf;
     private EntityManager _em;
 
-    //Simple implementation for flat transaction support
     private EntityTransaction _tx;
-    //b) What is the purpose of _txCount?
     private int _txcount;
 
-    //private ICountryRepository _countryRepository;
-    private IStudentRepository _studentRepository;
-    private ICourseRepository _courseRepository;
+    private IClientRepository _clientRepository;
+    private IDockRepository _dockRepository;
+    private IPersonRepository _personRepository;
 
     /// HELPER METHODS
     protected List helperQueryImpl(String jpql, Object... params) {
@@ -68,104 +58,155 @@ public class JPAContext implements IContext {
     }
 
     protected Object helperCreateImpl(Object entity) {
-        beginTransaction(); //Each write can have multiple inserts on the DB. See the relations mapping.
+        beginTransaction();
         _em.persist(entity);
-        commit(); //c) Why can we commit a transaction here, if other commands can be sent to the database?
+        commit();
         return entity;
     }
 
     protected Object helperUpdateImpl(Object entity) {
-        beginTransaction(); //Each write can have multiple inserts on the DB. See the relations mapping.
-        _em.merge(entity); //d) What does merge do?
+        beginTransaction();
+        _em.merge(entity);
         commit();
         return entity;
     }
 
     protected Object helperDeleteteImpl(Object entity) {
-        beginTransaction(); //Each write can have multiple inserts on the DB. See the relations.
+        beginTransaction();
         _em.remove(entity);
         commit();
         return entity;
     }
 
-    /// END HELPER
-    /*
-    protected class CountryRepository implements ICountryRepository {
-		//TODO
+    protected class DockRepository implements IDockRepository {
+
+        private final EntityManager em;
+
+        public DockRepository(EntityManager em) {
+            this.em = em;
+        }
+
+        @Override
+        public Optional<Dock> findById(Long id) {
+            return Optional.ofNullable(em.find(Dock.class, id));
+        }
+
+        @Override
+        public List<Dock> findAll() {
+            return em.createQuery("SELECT d FROM Dock d", Dock.class).getResultList();
+        }
+
+        @Override
+        public void save(Dock dock) {
+            if (dock.getId() == null) {
+                em.persist(dock);
+            } else {
+                em.merge(dock);
+            }
+        }
+
+        @Override
+        public void deleteById(Long id) {
+            Person person = em.find(Person.class, id);
+            if (person != null) {
+                em.remove(person);
+            }
+        }
     }
-   */
 
-    protected class StudentRepository implements IStudentRepository {
+    protected class ClientRepository implements IClientRepository {
 
-        @Override
-        public Student findByKey(Integer key) {
-            return _em.createNamedQuery("Student.findByKey", Student.class)
-                    .setParameter("key", key)
-                    .getSingleResult();
-        }
+        private final EntityManager em;
 
-        @SuppressWarnings("unchecked")
-        @Override
-        public Collection<Student> find(String jpql, Object... params) {
-
-            return helperQueryImpl(jpql, params);
+        public ClientRepository(EntityManager em) {
+            this.em = em;
         }
 
         @Override
-        public Collection<Student> getEnrolledStudents(Course c) {
-            return _em.createNamedQuery("Student.EnrolledInCourse", Student.class)
-                    .setParameter("key", c.getCourseId())
+        public Optional<Client> findById(Long id) {
+            if (id == null) return Optional.empty();
+
+            // Person.id is Integer → convert Long safely
+            int personPk = Math.toIntExact(id);
+
+            Person person = em.find(Person.class, personPk);
+            return person == null
+                    ? Optional.empty()
+                    : Optional.ofNullable(em.find(Client.class, person));
+        }
+
+        @Override
+        public List<Client> findAll() {
+            return em.createQuery("select c from Client c", Client.class)
                     .getResultList();
         }
 
         @Override
-        public Student create(Student entity) {
-            return (Student) helperCreateImpl(entity);
+        @Transactional
+        public void save(Client client) {
+            if (client == null) return;
+
+            boolean exists = client.getPerson() != null &&
+                    em.find(Client.class, client.getPerson()) != null;
+
+            if (exists) {
+                em.merge(client);   // UPDATE
+            } else {
+                em.persist(client); // INSERT
+            }
         }
 
         @Override
-        public Student update(Student entity) {
-            return (Student) helperUpdateImpl(entity);
-        }
+        @Transactional
+        public void deleteById(Long id) {
+            if (id == null) return;
 
-        @Override
-        public Student delete(Student entity) {
-            return (Student) helperDeleteteImpl(entity);
-        }
+            int personPk = Math.toIntExact(id);
 
+            Person person = em.find(Person.class, personPk);
+            if (person == null) return;
+
+            Client client = em.find(Client.class, person);
+            if (client != null) {
+                em.remove(client);
+            }
+        }
     }
 
-    protected class CourseRepository implements ICourseRepository {
+    protected class PersonRepository implements IPersonRepository {
 
-        @Override
-        public Course findByKey(Long key) {
-            return _em.createNamedQuery("Course.findByKey", Course.class)
-                    .setParameter("key", key)
-                    .getSingleResult();
-        }
+        private final EntityManager em;
 
-        @SuppressWarnings("unchecked")
-        @Override
-        public Collection<Course> find(String jpql, Object... params) {
-            return helperQueryImpl(jpql, params);
+        public PersonRepository(EntityManager em) {
+            this.em = em;
         }
 
         @Override
-        public Course create(Course entity) {
-            return (Course) helperCreateImpl(entity);
+        public Optional<Person> findById(Long id) {
+            return Optional.ofNullable(em.find(Person.class, id));
         }
 
         @Override
-        public Course update(Course entity) {
-            return (Course) helperUpdateImpl(entity);
+        public List<Person> findAll() {
+            return em.createQuery("SELECT p FROM Person p", Person.class).getResultList();
         }
 
         @Override
-        public Course delete(Course entity) {
-            return (Course) helperDeleteteImpl(entity);
+        public void save(Person person) {
+            if (person.getId() == null) {
+                em.persist(person);
+            } else {
+                em.merge(person);
+            }
         }
 
-
+        @Override
+        public void deleteById(Long id) {
+            Person person = em.find(Person.class, id);
+            if (person != null) {
+                em.remove(person);
+            }
+        }
     }
 
     @Override
@@ -234,9 +275,9 @@ public class JPAContext implements IContext {
 
         this._emf = Persistence.createEntityManagerFactory(persistentCtx);
         this._em = _emf.createEntityManager();
-        //this._countryRepository = new CountryRepository();
-        this._studentRepository = new StudentRepository();
-        this._courseRepository = new CourseRepository();
+        this._clientRepository = new ClientRepository(_em);
+        this._dockRepository = new DockRepository(_em);
+        this._personRepository = new PersonRepository(_em);
     }
 
 
@@ -250,25 +291,21 @@ public class JPAContext implements IContext {
     }
 
     //@Override
-    public ICountryRepository getCountries() {
-        //return _countryRepository;
-        return null; //TODO
+    public IDockRepository getDocks() {
+        return _dockRepository;
     }
 
     @Override
-    public IStudentRepository getStudents() {
-
-        return _studentRepository;
+    public IClientRepository getClients() {
+        return _clientRepository;
     }
 
     @Override
-    public ICourseRepository getCourses() {
-        return _courseRepository;
+    public IPersonRepository getPersons() {
+        return _personRepository;
     }
 
     /// functions and stored procedure
-    //Example using a scalar function
-    //n) what createNamedStoredProcedureQuery does?
     public java.math.BigDecimal rand_fx(int seed) {
 
         StoredProcedureQuery namedrand_fx =

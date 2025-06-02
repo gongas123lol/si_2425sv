@@ -28,19 +28,18 @@ import java.util.Scanner;
 import java.util.HashMap;
 import java.io.InputStreamReader;
 
-import isel.sisinf.jpa.ClientRepository;
-import isel.sisinf.jpa.ClientRepositoryImpl;
-import isel.sisinf.jpa.PersonRepository;
-import isel.sisinf.jpa.PersonRepositoryImpl;
+import isel.sisinf.Dal;
+import isel.sisinf.repo.IClientRepository;
+import isel.sisinf.repo.IPersonRepository;
 import isel.sisinf.model.Client;
-import isel.sisinf.model.Person;
-import isel.sisinf.services.ClientServices;
+import isel.sisinf.ClientServices;
+import isel.sisinf.repo.JPAContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+
 /**
  * 
  * Didactic material to support 
@@ -183,16 +182,17 @@ class UI
             emf = jakarta.persistence.Persistence.createEntityManagerFactory("citesPU");
             em  = emf.createEntityManager();
 
-            PersonRepository personRepository = new PersonRepositoryImpl(em);
-            ClientRepository clientRepository = new ClientRepositoryImpl(em);
-            ClientServices   clientService = new ClientServices(personRepository,clientRepository, em);
+            try (JPAContext ctx = new JPAContext()) {
+                IPersonRepository personRepository = ctx.getPersons();
+                IClientRepository clientRepository = ctx.getClients();
+                ClientServices clientService = new ClientServices(personRepository, clientRepository, em);
 
-            em.getTransaction().begin();
-            clientService.createPersonAndClient(name, email, taxnr);
-            em.getTransaction().commit();
+                em.getTransaction().begin();
+                clientService.createPersonAndClient(name, email, taxnr);
+                em.getTransaction().commit();
 
-            System.out.println("Cliente criado com sucesso!");
-
+                System.out.println("Cliente criado com sucesso!");
+            }
         } catch (IOException e) {
             System.out.println("Erro ao ler dados do usuário: " + e.getMessage());
         } catch (Exception e) {
@@ -217,8 +217,9 @@ class UI
         emf = jakarta.persistence.Persistence.createEntityManagerFactory("citesPU");
         em = emf.createEntityManager();
 
-        PersonRepository personRepository = new PersonRepositoryImpl(em);
-        ClientRepository clientRepository = new ClientRepositoryImpl(em);
+        try (JPAContext ctx = new JPAContext()) {
+            IPersonRepository personRepository = ctx.getPersons();
+            IClientRepository clientRepository = ctx.getClients();
 
         ClientServices clientServices = new ClientServices(personRepository,clientRepository,em);
         List<Client> users = clientServices.listClient();
@@ -238,7 +239,7 @@ class UI
             System.out.println("----------------------------------------");
             System.out.println("Total customers: " + users.size());
         }
-
+        }
     } catch (Exception e) {
         System.out.println("Error listing customers: " + e.getMessage());
     } finally {
@@ -269,7 +270,7 @@ class UI
     private void about()
     {
         // TODO: Add your Group ID & member names
-        System.out.println("DAL version:"+ isel.sisinf.jpa.Dal.version());
+        System.out.println("DAL version:"+ Dal.version());
         System.out.println("Core version:"+ isel.sisinf.model.Core.version());
         
     }

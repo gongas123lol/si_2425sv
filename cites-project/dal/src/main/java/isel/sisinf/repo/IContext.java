@@ -34,8 +34,8 @@ public interface IContext extends AutoCloseable {
 	 void clear();
 	 void persist(Object entity);
 	 
-	 //ICountryRepository getCountries();//TODO
-	 IStudentRepository getStudents();
-	 ICourseRepository getCourses(); 
+	 IClientRepository getClients();
+	 IDockRepository getDocks();
+	 IPersonRepository getPersons();
      
 }

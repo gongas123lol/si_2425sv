@@ -1,7 +1,7 @@
-package isel.sisinf.services;
+package isel.sisinf;
 
-import isel.sisinf.jpa.ClientRepository;
-import isel.sisinf.jpa.PersonRepository;
+import isel.sisinf.repo.IClientRepository;
+import isel.sisinf.repo.IPersonRepository;
 import isel.sisinf.model.Client;
 import isel.sisinf.model.Person;
 import jakarta.persistence.EntityManager;
@@ -13,19 +13,19 @@ import java.util.List;
 
 public class ClientServices {
 
-    private final PersonRepository personRepo;
-    private final ClientRepository clientRepo;
+    private final IPersonRepository personRepo;
+    private final IClientRepository clientRepo;
     @PersistenceContext
     private EntityManager em;        // injected by container or supplied manually
 
     /* Constructor used inside managed environments (EntityManager injected). */
-    public ClientServices(PersonRepository personRepo, ClientRepository clientRepo) {
+    public ClientServices(IPersonRepository personRepo, IClientRepository clientRepo) {
         this.personRepo = personRepo;
         this.clientRepo = clientRepo;
     }
 
     /* Convenience constructor for plain Java / CLI apps. */
-    public ClientServices(PersonRepository personRepo, ClientRepository clientRepo, EntityManager em) {
+    public ClientServices(IPersonRepository personRepo, IClientRepository clientRepo, EntityManager em) {
         this.personRepo = personRepo;
         this.clientRepo = clientRepo;
         this.em = em;
