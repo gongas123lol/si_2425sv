@@ -30,12 +30,14 @@ import java.io.InputStreamReader;
 
 import isel.sisinf.Dal;
 import isel.sisinf.repo.IClientRepository;
+import isel.sisinf.repo.IContext;
 import isel.sisinf.repo.IPersonRepository;
 import isel.sisinf.model.Client;
 import isel.sisinf.ClientServices;
 import isel.sisinf.repo.JPAContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.StoredProcedureQuery;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -190,7 +192,6 @@ class UI
                 em.getTransaction().begin();
                 clientService.createPersonAndClient(name, email, taxnr);
                 em.getTransaction().commit();
-
                 System.out.println("Cliente criado com sucesso!");
             }
         } catch (IOException e) {
@@ -256,8 +257,26 @@ class UI
     }
 
     private void startTrip() {
-        // TODO
-        System.out.println("startTrip()");
+
+        System.out.println("Enter the client ID:");
+        Integer clientId = new Scanner(System.in).nextInt();
+        System.out.println("Enter the Scooter ID:");
+        Integer scooterId = new Scanner(System.in).nextInt();
+
+        EntityManagerFactory emf = null;
+        EntityManager em = null;
+
+        try {
+            JPAContext ctx = new JPAContext();
+            Integer res = ctx.startTrip(clientId,scooterId);
+            System.out.println("result: "+ res);
+
+
+
+
+        }catch(Exception e){
+            System.out.println("Error starting trip: " + e.getMessage());
+        }
     }
 
     private void parkScooter()

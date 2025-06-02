@@ -28,6 +28,7 @@ import isel.sisinf.model.Dock;
 import isel.sisinf.model.Person;
 import isel.sisinf.model.Rider;
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Session;
@@ -357,6 +358,15 @@ public class JPAContext implements IContext {
         namedrand_fx.execute();
 
         return (java.math.BigDecimal) namedrand_fx.getOutputParameterValue(2);
+    }
+
+    public Integer startTrip(Integer clientId, Integer scooterId){
+        StoredProcedureQuery startTrip = _em.createNamedStoredProcedureQuery("startTrip");
+        startTrip.setParameter(1, clientId);
+        startTrip.setParameter(2, scooterId);
+        startTrip.execute();
+        System.out.println(startTrip.getResultList());
+        return (Integer) startTrip.getOutputParameterValue(3);
     }
 
 }
