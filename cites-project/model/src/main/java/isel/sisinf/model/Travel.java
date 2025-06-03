@@ -26,6 +26,14 @@ public class Travel {
     private Dock startDock;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "scooter", nullable = false)
+    private Scooter scooter;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "client", nullable = false)
+    private Scooter client;
+
+    @ManyToOne(optional = false)
     @JoinColumn(name = "end_dock_id")
     private Dock endDock;
 
@@ -77,4 +85,8 @@ public class Travel {
     public void setEndDock(Dock endDock) {
         this.endDock = endDock;
     }
+
+    public Scooter getScooter() {return scooter;}
+
+    public void setScooter(Scooter scooter) {this.scooter = scooter;}
 }

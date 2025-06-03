@@ -292,7 +292,12 @@ class UI
         try {
             JPAContext ctx = new JPAContext();
             Integer res = ctx.startTrip(clientId,scooterId);
-            System.out.println("result: "+ res);
+
+            if(res == 1){
+                System.out.println("trip started successfully");
+            }else{
+                System.out.println("trip start failed");
+            }
 
 
 
@@ -304,8 +309,25 @@ class UI
 
     private void parkScooter()
     {
-        // TODO
-        System.out.println("parkScooter()");
+        System.out.println("Enter the scooter ID:");
+        Integer scooterId = new Scanner(System.in).nextInt();
+
+        System.out.println("Enter the dock ID:");
+        Integer dockId = new Scanner(System.in).nextInt();
+
+        try {
+            JPAContext ctx = new JPAContext();
+            Integer res = ctx.endTrip(scooterId,dockId);
+
+            if(res == 1){
+                System.out.println("scooter parked successfully");
+            }else{
+                System.out.println("scooter parking failed");
+            }
+
+        }catch(Exception e){
+            System.out.println("Error starting trip: " + e.getMessage());
+        }
         
     }
 

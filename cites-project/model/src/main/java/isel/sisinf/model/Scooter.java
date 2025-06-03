@@ -25,6 +25,7 @@ public class Scooter {
     @JoinColumn(name = "model") // References SCOOTERMODEL(number)
     private ScooterModel model;
 
+    @Version
     @Column(name = "version")
     private LocalDateTime version;
 

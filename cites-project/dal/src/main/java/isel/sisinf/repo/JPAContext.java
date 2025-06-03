@@ -23,10 +23,7 @@ SOFTWARE.
 */
 package isel.sisinf.repo;
 
-import isel.sisinf.model.Client;
-import isel.sisinf.model.Dock;
-import isel.sisinf.model.Person;
-import isel.sisinf.model.Rider;
+import isel.sisinf.model.*;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
@@ -34,6 +31,8 @@ import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Session;
 
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -220,6 +219,48 @@ public class JPAContext implements IContext {
         }
     }
 
+    protected class ScooterRepository implements IScooterRepository {
+        private final EntityManager em;
+
+        public ScooterRepository(EntityManager em) {
+            this.em = em;
+        }
+
+        @Override
+        public Optional<Scooter> findById(Long id) {
+            return Optional.ofNullable(em.find(Scooter.class, id));
+        }
+
+        @Override
+        public List<Scooter> findAll() {
+            return em.createQuery("SELECT s FROM Scooter s", Scooter.class).getResultList();
+        }
+
+        @Override
+        public void save(Scooter scooter) {
+            if (scooter.getId() == null) {
+                em.persist(scooter);
+            } else {
+                em.merge(scooter);
+            }
+        }
+
+        @Override
+        public void deleteById(Long id) {
+            Scooter scooter = em.find(Scooter.class, id);
+            if (scooter != null) {
+                em.remove(scooter);
+            }
+        }
+    }
+
+    private IScooterRepository _scooterRepository;
+
+    public IScooterRepository getScooters() {
+        return _scooterRepository;
+    }
+
+
     protected class RiderRepository implements IRiderRepository {
 
         private final EntityManager em;
@@ -328,6 +369,8 @@ public class JPAContext implements IContext {
         this._dockRepository = new DockRepository(_em);
         this._personRepository = new PersonRepository(_em);
         this._riderRepository = new RiderRepository(_em);
+        this._scooterRepository = new ScooterRepository(_em);
+
     }
 
 
@@ -379,5 +422,56 @@ public class JPAContext implements IContext {
         //System.out.println(startTrip.getResultList());
         return 1;
     }
+
+    public Integer endTrip(Integer clientId, Integer dockId) {
+        try {
+            beginTransaction();
+
+            // get dock
+            Dock dock = _em.find(Dock.class, Long.valueOf(dockId));
+            if (dock == null || !"free".equals(dock.getState())) {
+                throw new IllegalStateException("Dock inválida ou ocupada.");
+            }
+
+            //get active trip
+            TypedQuery<Travel> q = _em.createQuery(
+                    "SELECT t FROM Travel t WHERE t.client.id = :clientId AND t.endTime IS NULL",
+                    Travel.class
+            );
+            q.setParameter("clientId", Long.valueOf(clientId));
+
+            List<Travel> results = q.getResultList();
+            if (results.isEmpty()) {
+                throw new IllegalStateException("O cliente não tem nenhuma viagem ativa.");
+            }
+
+            Travel travel = results.get(0);
+            Scooter scooter = travel.getScooter();
+
+            // update travel
+            travel.setEndTime(LocalDateTime.now());
+            travel.setEndDock(dock);
+
+            //update dock
+            dock.setState("occupy");
+            dock.setScooter(scooter);
+
+            _em.merge(travel);
+            _em.merge(dock);
+
+            commit();
+            return 1;
+
+        } catch (OptimisticLockException e) {
+            if (_tx != null && _tx.isActive()) _tx.rollback();
+            throw new RuntimeException("OptimisticLockException: "+ e.getMessage());
+        } catch (Exception e) {
+            if (_tx != null && _tx.isActive()) _tx.rollback();
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+
 
 }
