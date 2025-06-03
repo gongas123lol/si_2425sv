@@ -76,7 +76,7 @@ $$ LANGUAGE plpgsql;
 
 -- region Question 2
 -- que calcula e devolve o nível de ocupação de uma estação (em percentagem, valor entre 0 e 1);
-CREATE OR REPLACE FUNCTION fx_dock_occupancy(dockId integer) RETURNS INTEGER
+CREATE OR REPLACE FUNCTION fx_dock_occupancy(dockId integer) RETURNS NUMERIC
 AS $$
     DECLARE
         stationInfo station%rowtype;

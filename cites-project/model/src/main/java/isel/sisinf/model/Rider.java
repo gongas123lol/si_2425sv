@@ -46,23 +46,6 @@ public class Rider {
     @Transient
     private CardType typeOfCard;
 
-    /* --------------------  Callbacks JPA -------------------- */
-
-    @PostLoad
-    private void syncEnumAfterLoad() {
-        this.typeOfCard = typeOfCardDb == null
-                ? null
-                : CardType.fromDb(typeOfCardDb);
-    }
-
-    @PrePersist
-    @PreUpdate
-    private void syncDbBeforeSave() {
-        this.typeOfCardDb = typeOfCard == null
-                ? null
-                : typeOfCard.getDbValue();
-    }
-
     /* --------------------  Getters e Setters -------------------- */
 
     public Long getId() {
