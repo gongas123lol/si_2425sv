@@ -6,14 +6,27 @@ public enum CardType {
 
     private final String dbValue;
 
-    CardType(String dbValue) { this.dbValue = dbValue; }
+    CardType(String dbValue) {
+        this.dbValue = dbValue;
+    }
 
-    public String getDbValue() { return dbValue; }
+    public String getDbValue() {
+        return dbValue;
+    }
 
     public static CardType fromDb(String value) {
-        for (CardType ct : values())
-            if (ct.dbValue.equalsIgnoreCase(value))
+        if (value == null) return null;
+
+        String cleanValue = value.trim().toLowerCase();
+        System.out.println("Cleaned DB value: '" + cleanValue + "'");
+
+        for (CardType ct : values()) {
+            System.out.println("Comparing to: '" + ct.dbValue + "'");
+            if (ct.dbValue.equalsIgnoreCase(cleanValue)) {
                 return ct;
-        throw new IllegalArgumentException("Unknown CardType: " + value);
+            }
+        }
+
+        throw new IllegalArgumentException("Unknown CardType: [" + value + "]");
     }
 }

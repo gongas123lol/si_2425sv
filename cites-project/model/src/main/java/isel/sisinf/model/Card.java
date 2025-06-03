@@ -12,16 +12,16 @@ public class Card {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "client_id")
+    @JoinColumn(name = "client")
     private Client client;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
+    @Column(name = "typeofcard", nullable = false)
     private CardType type;
-
+/*
     @Column(name = "expiration_date", nullable = false)
     private LocalDate expirationDate;
-
+*/
     @Column
     private Float credit;
 
@@ -53,7 +53,7 @@ public class Card {
     public void setType(CardType type) {
         this.type = type;
     }
-
+/*
     public LocalDate getExpirationDate() {
         return expirationDate;
     }
@@ -61,5 +61,7 @@ public class Card {
     public void setExpirationDate(LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
+
+ */
 
 }
