@@ -13,12 +13,14 @@
 -- region Question 1.a
 -- só uma trotineta que está numa doca pode ser usada no início de uma viagem
 CREATE OR REPLACE TRIGGER checkScooterInDock BEFORE INSERT ON travel
-FOR EACH ROW EXECUTE PROCEDURE checkScooterInDock(new.scooter, new.stinitial);
+FOR EACH ROW EXECUTE PROCEDURE checkScooterInDock();
 
 
-CREATE OR REPLACE PROCEDURE checkScooterInDock(scooterId integer, stId integer)
+CREATE OR REPLACE FUNCTION checkScooterInDock() RETURNS TRIGGER
 AS $$
     DECLARE
+        scooterId integer := NEW.scooter;
+        stId integer := NEW.stinitial;
         scooterInfo scooter%rowtype;
         dockInfo dock%rowtype;
         stationInfo station%rowtype;
@@ -47,14 +49,15 @@ $$ LANGUAGE plpgsql;
 -- region Question 1.b
 -- uma trotineta e um utilizador só podem participar numa única viagem a decorrer.
 CREATE OR REPLACE TRIGGER checkTravelActive BEFORE INSERT ON travel
-FOR EACH ROW EXECUTE PROCEDURE checkTravelActive(new.scooter, new.client);
+FOR EACH ROW EXECUTE PROCEDURE checkTravelActive();
 
-CREATE OR REPLACE PROCEDURE checkTravelActive(scooterId integer, clientId integer)
+CREATE OR REPLACE FUNCTION checkTravelActive() RETURNS TRIGGER
 AS $$
     DECLARE
+        scooterId integer := NEW.scooter;
+        clientId integer := NEW.client;
         scooterInfo scooter%rowtype;
         clientInfo client%rowtype;
-        travelInfo SETOF travel%rowtype;
     BEGIN
         SELECT INTO STRICT scooterInfo * FROM scooter WHERE scooter.id = scooterId;
         IF NOT FOUND THEN
@@ -64,8 +67,7 @@ AS $$
         IF NOT FOUND THEN
             RAISE EXCEPTION 'Client % does not exist', clientId;
         END IF;
-        SELECT INTO travelInfo * FROM travel WHERE travel.scooter = scooterId AND travel.client = clientId AND travel.dfinal IS NULL;
-        IF COUNT(travelInfo) >= 1 THEN
+        IF COUNT((SELECT * FROM travel WHERE travel.scooter = scooterId AND travel.client = clientId AND travel.dfinal IS NULL)) >= 1 THEN
             RAISE EXCEPTION 'Scooter % and client % are already in an active trip', scooterId, clientId;
         END IF;
     END;
@@ -97,7 +99,6 @@ AS
 SELECT p.*,c.dtregister,cd.id AS cardid,cd.credit,cd.typeofcard
 FROM CLIENT c INNER JOIN PERSON p ON (c.person=p.id)
 	INNER JOIN CARD cd ON (cd.client = c.person);
---TODO
 ---------------------------------------------------
 CREATE OR REPLACE FUNCTION insert_rider()
 RETURNS trigger AS
