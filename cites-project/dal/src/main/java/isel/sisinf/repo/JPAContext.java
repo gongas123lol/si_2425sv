@@ -374,7 +374,7 @@ public class JPAContext implements IContext {
     public Integer startTrip(Integer clientId, Integer scooterId){
         StoredProcedureQuery startTrip = _em.createNamedStoredProcedureQuery("startTrip");
         startTrip.setParameter(2, clientId);
-        startTrip.setParameter(14, scooterId);
+        startTrip.setParameter(1, scooterId);
         startTrip.execute();
         //System.out.println(startTrip.getResultList());
         return 1;

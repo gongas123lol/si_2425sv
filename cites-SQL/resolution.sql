@@ -18,32 +18,34 @@ FOR EACH ROW EXECUTE PROCEDURE checkScooterInDock();
 
 CREATE OR REPLACE FUNCTION checkScooterInDock() RETURNS TRIGGER
 AS $$
-    DECLARE
-        scooterId integer := NEW.scooter;
-        stId integer := NEW.stinitial;
-        scooterInfo scooter%rowtype;
-        dockInfo dock%rowtype;
-        stationInfo station%rowtype;
-    BEGIN
-        ---------------------------------------------------------------------------
-        SELECT INTO STRICT scooterInfo * FROM scooter WHERE scooter.id = scooterId;
-        IF NOT FOUND THEN
-            RAISE EXCEPTION 'Scooter % does not exist', scooterId;
-        END IF;
-        ---------------------------------------------------------------------------
-        SELECT INTO STRICT dockInfo * FROM dock WHERE dock.scooter = scooterId;
-        IF NOT FOUND THEN
-            RAISE EXCEPTION 'Scooter % is not in any dock %', scooterId, stId;
-        END IF;
-        ---------------------------------------------------------------------------
-        SELECT INTO STRICT stationInfo * FROM station WHERE station.id = stId;
-        IF NOT FOUND THEN
-            RAISE EXCEPTION 'Station % does not exist', stId;
-        END IF;
-        IF dockInfo.station != stationInfo.id THEN
-            RAISE EXCEPTION 'Scooter % is not on station %', scooterId, stId;
-        END IF;
-    END
+DECLARE
+    scooterId integer := NEW.scooter;
+    stId integer := NEW.stinitial;
+    scooterInfo scooter%rowtype;
+    dockInfo dock%rowtype;
+    stationInfo station%rowtype;
+BEGIN
+    SELECT INTO STRICT scooterInfo * FROM scooter WHERE scooter.id = scooterId;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Scooter % does not exist', scooterId;
+    END IF;
+
+    SELECT INTO STRICT dockInfo * FROM dock WHERE dock.scooter = scooterId;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Scooter % is not in any dock %', scooterId, stId;
+    END IF;
+
+    SELECT INTO STRICT stationInfo * FROM station WHERE station.id = stId;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Station % does not exist', stId;
+    END IF;
+
+    IF dockInfo.station != stationInfo.id THEN
+        RAISE EXCEPTION 'Scooter % is not on station %', scooterId, stId;
+    END IF;
+
+    RETURN NEW;
+END;
 $$ LANGUAGE plpgsql;
 
 -- region Question 1.b
@@ -70,6 +72,7 @@ AS $$
         IF COUNT((SELECT * FROM travel WHERE travel.scooter = scooterId AND travel.client = clientId AND travel.dfinal IS NULL)) >= 1 THEN
             RAISE EXCEPTION 'Scooter % and client % are already in an active trip', scooterId, clientId;
         END IF;
+        return NEW;
     END;
 $$ LANGUAGE plpgsql;
 
