@@ -18,10 +18,7 @@ public class Card {
     @Enumerated(EnumType.STRING)
     @Column(name = "typeofcard", nullable = false)
     private CardType type;
-/*
-    @Column(name = "expiration_date", nullable = false)
-    private LocalDate expirationDate;
-*/
+
     @Column
     private Float credit;
 
@@ -34,9 +31,13 @@ public class Card {
         this.id = id;
     }
 
-    public Float getCredit() { return credit; }
+    public Float getCredit() {
+        return credit;
+    }
 
-    public void setCredit(Float credit) { this.credit = credit; }
+    public void setCredit(Float credit) {
+        this.credit = credit;
+    }
 
     public Client getClient() {
         return client;
@@ -53,15 +54,5 @@ public class Card {
     public void setType(CardType type) {
         this.type = type;
     }
-/*
-    public LocalDate getExpirationDate() {
-        return expirationDate;
-    }
-
-    public void setExpirationDate(LocalDate expirationDate) {
-        this.expirationDate = expirationDate;
-    }
-
- */
 
 }

@@ -30,7 +30,7 @@ public class Rider {
     @Column(name = "dtregister", nullable = false)
     private LocalDateTime dtRegister;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cardid")
     private Card card;
 
@@ -45,6 +45,8 @@ public class Rider {
 
     @Transient
     private CardType typeOfCard;
+
+    /* --------------------  Getters e Setters -------------------- */
 
     public Long getId() {
         return id;
