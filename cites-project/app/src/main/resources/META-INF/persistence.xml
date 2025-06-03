@@ -3,7 +3,7 @@
              xmlns="https://jakarta.ee/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
-    <persistence-unit name="dal-lab" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="projectSI" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <!-- List your entity classes here -->
@@ -20,9 +20,9 @@
 
         <properties>
             <!-- Database connection settings -->
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/assignmentsi"/>
-            <property name="jakarta.persistence.jdbc.user" value="postgres"/>
-            <property name="jakarta.persistence.jdbc.password" value="postgres"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://sisinfvlab0.dyn.fil.isel.pt:5432/t41dg13"/>
+            <property name="jakarta.persistence.jdbc.user" value="t41dg13"/>
+            <property name="jakarta.persistence.jdbc.password" value="t41dg13"/>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
 
             <!-- Hibernate properties -->

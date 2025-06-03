@@ -25,7 +25,6 @@ package isel.sisinf.ui;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.io.InputStreamReader;
@@ -33,15 +32,11 @@ import java.io.InputStreamReader;
 import isel.sisinf.Dal;
 import isel.sisinf.model.Rider;
 import isel.sisinf.repo.*;
-import isel.sisinf.model.Client;
-import isel.sisinf.ClientServices;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Query;
-import jakarta.persistence.StoredProcedureQuery;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 
 /**
  * 
@@ -239,7 +234,7 @@ class UI
             String stationID = reader.readLine();
             Integer stationIdInt = Integer.parseInt(stationID);
 
-            emf = jakarta.persistence.Persistence.createEntityManagerFactory("dal-lab");
+            emf = jakarta.persistence.Persistence.createEntityManagerFactory("projectSI");
             em = emf.createEntityManager();
 
             IDockRepository dockRepository = ctx.getDocks();

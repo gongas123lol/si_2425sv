@@ -357,7 +357,7 @@ public class JPAContext implements IContext {
     }
 
     public JPAContext() {
-        this("dal-lab");
+        this("projectSI");
     }
 
     public JPAContext(String persistentCtx) {

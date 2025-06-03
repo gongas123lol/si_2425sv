@@ -12,10 +12,6 @@
 
 -- region Question 1.a
 -- só uma trotineta que está numa doca pode ser usada no início de uma viagem
-CREATE OR REPLACE TRIGGER checkScooterInDock BEFORE INSERT ON travel
-FOR EACH ROW EXECUTE PROCEDURE checkScooterInDock();
-
-
 CREATE OR REPLACE FUNCTION checkScooterInDock() RETURNS TRIGGER
 AS $$
 DECLARE
@@ -47,12 +43,12 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+---------------------------------------------------
+CREATE OR REPLACE TRIGGER checkScooterInDock BEFORE INSERT ON travel
+    FOR EACH ROW EXECUTE PROCEDURE checkScooterInDock();
 
 -- region Question 1.b
 -- uma trotineta e um utilizador só podem participar numa única viagem a decorrer.
-CREATE OR REPLACE TRIGGER checkTravelActive BEFORE INSERT ON travel
-FOR EACH ROW EXECUTE PROCEDURE checkTravelActive();
-
 CREATE OR REPLACE FUNCTION checkTravelActive() RETURNS TRIGGER
 AS $$
     DECLARE
@@ -75,6 +71,9 @@ AS $$
         return NEW;
     END;
 $$ LANGUAGE plpgsql;
+----------------------------------------------------
+CREATE OR REPLACE TRIGGER checkTravelActive BEFORE INSERT ON travel
+    FOR EACH ROW EXECUTE PROCEDURE checkTravelActive();
 
 
 -- region Question 2
