@@ -423,7 +423,7 @@ public class JPAContext implements IContext {
         return 1;
     }
 
-    public Integer endTrip(Integer clientId, Integer dockId) {
+    public Integer endTrip(Integer scooterId, Integer dockId) {
         try {
             beginTransaction();
 
@@ -432,13 +432,13 @@ public class JPAContext implements IContext {
             if (dock == null || !"free".equals(dock.getState())) {
                 throw new IllegalStateException("Dock inválida ou ocupada.");
             }
-
-            //get active trip
+            Scooter scooter = _scooterRepository.findById(Long.valueOf(scooterId)).orElse(null);
             TypedQuery<Travel> q = _em.createQuery(
-                    "SELECT t FROM Travel t WHERE t.client.id = :clientId AND t.endTime IS NULL",
+                    "SELECT t FROM Travel t WHERE t.scooter = :scooterID AND t.endTime IS NULL",
                     Travel.class
             );
-            q.setParameter("clientId", Long.valueOf(clientId));
+            q.setParameter("scooterID", scooter);
+
 
             List<Travel> results = q.getResultList();
             if (results.isEmpty()) {
@@ -446,7 +446,6 @@ public class JPAContext implements IContext {
             }
 
             Travel travel = results.get(0);
-            Scooter scooter = travel.getScooter();
 
             // update travel
             travel.setEndTime(LocalDateTime.now());

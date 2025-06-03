@@ -16,6 +16,7 @@
         <class>isel.sisinf.model.Station</class>
         <class>isel.sisinf.model.Scooter</class>
         <class>isel.sisinf.model.ScooterModel</class>
+        <class>isel.sisinf.model.Travel</class>
 
         <properties>
             <!-- Database connection settings -->

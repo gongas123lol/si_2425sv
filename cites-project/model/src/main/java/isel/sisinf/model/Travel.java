@@ -11,18 +11,20 @@ public class Travel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /*
     @ManyToOne(optional = false)
     @JoinColumn(name = "card_id")
     private Card card;
 
-    @Column(name = "start_time", nullable = false)
+     */
+    @Column(name = "dinitial", nullable = false)
     private LocalDateTime startTime;
 
-    @Column(name = "end_time", nullable = false)
+    @Column(name = "dfinal", nullable = false)
     private LocalDateTime endTime;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "start_dock_id")
+    @JoinColumn(name = "stinitial")
     private Dock startDock;
 
     @ManyToOne(optional = false)
@@ -31,11 +33,18 @@ public class Travel {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "client", nullable = false)
-    private Scooter client;
+    private Client client;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "end_dock_id")
+    @JoinColumn(name = "stfinal")
     private Dock endDock;
+
+    @Column(name = "comment")
+    private String comment;
+
+    @Column(name = "evaluation")
+    private Integer rate;
+
 
     // Getters and setters
     public Long getId() {
@@ -44,14 +53,6 @@ public class Travel {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Card getCard() {
-        return card;
-    }
-
-    public void setCard(Card card) {
-        this.card = card;
     }
 
     public LocalDateTime getStartTime() {
