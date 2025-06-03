@@ -55,4 +55,8 @@ public class Card {
         this.type = type;
     }
 
+    @Override
+    public String toString() {
+        return getType().toString().toUpperCase();
+    }
 }
