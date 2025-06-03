@@ -76,21 +76,29 @@ $$ LANGUAGE plpgsql;
 
 -- region Question 2
 -- que calcula e devolve o nível de ocupação de uma estação (em percentagem, valor entre 0 e 1);
-CREATE OR REPLACE FUNCTION fx_dock_occupancy(dockId integer) RETURNS NUMERIC
+CREATE OR REPLACE FUNCTION fx_dock_occupancy(dockId integer) RETURNS NUMERIC(4,2)
 AS $$
-    DECLARE
-        stationInfo station%rowtype;
-    BEGIN
-        SELECT INTO STRICT stationInfo *
-        FROM station WHERE station.id = (SELECT station FROM dock WHERE dock.number = dockId);
-        IF NOT FOUND THEN
-            RAISE EXCEPTION 'Dock % does not exist', dockId;
-        END IF;
+DECLARE
+    station_id INTEGER;
+    occupied NUMERIC(4,2);
+    total NUMERIC(4,2);
+BEGIN
+    -- Obter o id da estação associada à doca
+    SELECT station INTO STRICT station_id FROM dock WHERE number = dockId;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Dock % does not exist', dockId;
+    END IF;
 
-        -- Consider only usable docks (Not the ones that are under maintenance)
-        RETURN (SELECT count(*) FROM dock WHERE dock.station = stationInfo.id AND dock.state = 'occupy')/
-        (SELECT count(*) FROM dock WHERE dock.station = stationInfo.id AND (dock.state = 'occupy' OR dock.state = 'free'));
-    END;
+    -- Contar docas ocupadas e total de docas na estação
+    SELECT COUNT(*)::NUMERIC(4,2) INTO occupied FROM dock WHERE station = station_id AND state = 'occupy';
+    SELECT COUNT(*)::NUMERIC(4,2) INTO total FROM dock WHERE station = station_id;
+
+    IF total = 0 THEN
+        RETURN 0;
+    END IF;
+
+    RETURN (occupied / total)::NUMERIC(4,2);
+END;
 $$ LANGUAGE plpgsql;
  
 -- region Question 3
