@@ -69,7 +69,7 @@ AS $$
         IF NOT FOUND THEN
             RAISE EXCEPTION 'Client % does not exist', clientId;
         END IF;
-        IF COUNT((SELECT * FROM travel WHERE travel.scooter = scooterId AND travel.client = clientId AND travel.dfinal IS NULL)) >= 1 THEN
+        IF COUNT((SELECT dinitial FROM travel WHERE travel.scooter = scooterId AND travel.client = clientId AND travel.dfinal IS NULL)) >= 1 THEN
             RAISE EXCEPTION 'Scooter % and client % are already in an active trip', scooterId, clientId;
         END IF;
         return NEW;
@@ -203,7 +203,7 @@ BEGIN
     INSERT INTO TRAVEL (
         dinitial, client, scooter, stinitial
     ) VALUES (
-        CURRENT_TIMESTAMP, clientid, scooter_id, station_id
+        CURRENT_TIMESTAMP, clientid :: INTEGER, scooter_id:: INTEGER, station_id:: INTEGER
     );
 
     -- Atualiza o dock para indicar que está livre

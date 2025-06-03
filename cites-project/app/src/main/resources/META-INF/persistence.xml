@@ -19,9 +19,9 @@
 
         <properties>
             <!-- Database connection settings -->
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://sisinfvlab0.dyn.fil.isel.pt:5432/t41dg13"/>
-            <property name="jakarta.persistence.jdbc.user" value="t41dg13"/>
-            <property name="jakarta.persistence.jdbc.password" value="t41dg13"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/assignmentsi"/>
+            <property name="jakarta.persistence.jdbc.user" value="postgres"/>
+            <property name="jakarta.persistence.jdbc.password" value="postgres"/>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
 
             <!-- Hibernate properties -->

@@ -371,10 +371,10 @@ public class JPAContext implements IContext {
         return (java.math.BigDecimal) namedrand_fx.getOutputParameterValue(2);
     }
 
-    public Integer startTrip(Integer clientId, Integer scooterId){
+    public Integer startTrip(Integer clientId, Integer dockId){
         StoredProcedureQuery startTrip = _em.createNamedStoredProcedureQuery("startTrip");
         startTrip.setParameter(2, clientId);
-        startTrip.setParameter(1, scooterId);
+        startTrip.setParameter(1, dockId);
         startTrip.execute();
         //System.out.println(startTrip.getResultList());
         return 1;
