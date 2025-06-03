@@ -23,20 +23,21 @@ SOFTWARE.
 */
 package isel.sisinf.ui;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.io.InputStreamReader;
 
 import isel.sisinf.Dal;
-import isel.sisinf.repo.IClientRepository;
-import isel.sisinf.repo.IContext;
-import isel.sisinf.repo.IPersonRepository;
+import isel.sisinf.model.Rider;
+import isel.sisinf.repo.*;
 import isel.sisinf.model.Client;
 import isel.sisinf.ClientServices;
-import isel.sisinf.repo.JPAContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Query;
 import jakarta.persistence.StoredProcedureQuery;
 
 import java.io.BufferedReader;
@@ -169,41 +170,31 @@ class UI
 
     private void createCostumer() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        EntityManagerFactory emf = null;
-        EntityManager em = null;
-
-        try {
+        try (JPAContext ctx = new JPAContext()) {
             System.out.println("Nome?");
             String name = reader.readLine();
             System.out.println("Email?");
             String email = reader.readLine();
             System.out.println("NIF?");
-            String taxnrStr = reader.readLine();
-            Integer taxnr = Integer.valueOf(taxnrStr);
+            Integer taxnr = Integer.valueOf(reader.readLine());
+            System.out.println("Tipo de cartão? (resident/tourist)");
+            String typeOfCard = reader.readLine();
 
-            emf = jakarta.persistence.Persistence.createEntityManagerFactory("citesPU");
-            em  = emf.createEntityManager();
+            Rider rider = new Rider();
+            rider.setName(name);
+            rider.setEmail(email);
+            rider.setTaxNumber(taxnr);
+            rider.setDtRegister(LocalDateTime.now());
+            rider.setCredit(BigDecimal.ZERO);
+            rider.setTypeOfCardDb(typeOfCard);
 
-            try (JPAContext ctx = new JPAContext()) {
-                IPersonRepository personRepository = ctx.getPersons();
-                IClientRepository clientRepository = ctx.getClients();
-                ClientServices clientService = new ClientServices(personRepository, clientRepository, em);
+            ctx.beginTransaction();
+            ctx.getRiders().save(rider);
+            ctx.commit();
 
-                em.getTransaction().begin();
-                clientService.createPersonAndClient(name, email, taxnr);
-                em.getTransaction().commit();
-                System.out.println("Cliente criado com sucesso!");
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao ler dados do usuário: " + e.getMessage());
+            System.out.println("Cliente criado com sucesso!");
         } catch (Exception e) {
             System.out.println("Erro ao criar cliente: " + e.getMessage());
-            if (em != null && em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-        } finally {
-            if (em != null) em.close();
-            if (emf != null) emf.close();
         }
     }
 
@@ -238,12 +229,55 @@ class UI
         }
     }
 
-    private void listDocks()
-    {
-        // TODO
-        System.out.println("listDocks()");
+    private void listDocks() {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        EntityManagerFactory emf = null;
+        EntityManager em = null;
 
+        try (JPAContext ctx = new JPAContext()) {
+            System.out.println("Station ID?");
+            String stationID = reader.readLine();
+            Integer stationIdInt = Integer.parseInt(stationID);
+
+            emf = jakarta.persistence.Persistence.createEntityManagerFactory("dal-lab");
+            em = emf.createEntityManager();
+
+            IDockRepository dockRepository = ctx.getDocks();
+            var docks = dockRepository.findByStationId(stationIdInt);
+
+
+            if (docks.isEmpty()) {
+                System.out.println("Não existem docks registadas.");
+            } else {
+                for (var dock : docks) {
+                    Query query = em.createNativeQuery("SELECT fx_dock_occupancy(?)");
+                    query.setParameter(1, dock.getNumber());
+                    Object result = query.getSingleResult();
+                    double occupancy = (result != null) ? ((Number) result).doubleValue() : 0.0;
+                    System.out.println("Station " +  stationID +" occupancy:" + occupancy * 100 + "%");
+                    break;
+
+                }
+                System.out.printf("%-10s | %-10s\n", "Number", "State");
+                System.out.println("-------------------------------------------");
+
+                for (var dock : docks) {
+                    System.out.printf("%-10d | %-10s\n",
+                            dock.getNumber(),
+                            dock.getState());
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error listing docks: " + e.getMessage());
+        } finally {
+            if (em != null) em.close();
+            if (emf != null) emf.close();
+            System.out.println("\nPrima ENTER para continuar...");
+            new Scanner(System.in).nextLine();
+        }
     }
+
 
     private void startTrip() {
 

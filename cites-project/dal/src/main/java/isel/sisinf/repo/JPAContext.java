@@ -102,7 +102,7 @@ public class JPAContext implements IContext {
 
         @Override
         public void save(Dock dock) {
-            if (dock.getId() == null) {
+            if (dock.getNumber() == null) {
                 em.persist(dock);
             } else {
                 em.merge(dock);
@@ -115,6 +115,13 @@ public class JPAContext implements IContext {
             if (dock != null) {
                 em.remove(dock);
             }
+        }
+
+        @Override
+        public List<Dock> findByStationId(Integer stationId) {
+            return em.createQuery("SELECT d FROM Dock d WHERE d.station.id = :stationId", Dock.class)
+                    .setParameter("stationId", stationId)
+                    .getResultList();
         }
     }
 

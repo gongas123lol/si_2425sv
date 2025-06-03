@@ -10,4 +10,5 @@ public interface IDockRepository {
     List<Dock> findAll();
     void save(Dock dock);
     void deleteById(Long id);
+    List<Dock> findByStationId(Integer stationId);
 }

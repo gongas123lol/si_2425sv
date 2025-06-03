@@ -121,7 +121,8 @@ public class Rider {
     }
 
     /* Setter protegido: a camada de persistência pode precisar. */
-    protected void setTypeOfCardDb(String typeOfCardDb) {
+    public void setTypeOfCardDb(String typeOfCardDb) {
         this.typeOfCardDb = typeOfCardDb;
+        setTypeOfCard(CardType.valueOf(typeOfCardDb));
     }
 }

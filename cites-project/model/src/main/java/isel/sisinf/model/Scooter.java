@@ -5,38 +5,36 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "SCOOTER")
+@Table(name = "scooter")
 public class Scooter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false, precision = 4, scale = 2)
     private BigDecimal weight;
 
-    @Column(nullable = false, precision = 4, scale = 2)
+    @Column(name = "maxvelocity", nullable = false, precision = 4, scale = 2)
     private BigDecimal maxVelocity;
 
     @Column(nullable = false)
-    private Integer Autonomy;
+    private Integer battery;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "model", referencedColumnName = "number")
+    @JoinColumn(name = "model") // References SCOOTERMODEL(number)
     private ScooterModel model;
-    // The manufacture's name is in the Model table
 
-    @Column(nullable = false)
-    private Double price;
-
+    @Column(name = "version")
     private LocalDateTime version;
 
-    // Getters and Setters
-    public Integer getId() {
+    // Getters and setters
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -56,12 +54,12 @@ public class Scooter {
         this.maxVelocity = maxVelocity;
     }
 
-    public Integer getAutonomy() {
-        return Autonomy;
+    public Integer getBattery() {
+        return battery;
     }
 
-    public void setAutonomy(Integer Autonomy) {
-        this.Autonomy = Autonomy;
+    public void setBattery(Integer battery) {
+        this.battery = battery;
     }
 
     public ScooterModel getModel() {

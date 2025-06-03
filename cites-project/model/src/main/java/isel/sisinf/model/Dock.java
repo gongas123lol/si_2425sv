@@ -1,6 +1,7 @@
 package isel.sisinf.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "dock")
@@ -8,22 +9,31 @@ public class Dock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "number") // Matches "number serial primary key"
+    private Integer number;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "station_id")
+    @JoinColumn(name = "station") // Matches station INTEGER REFERENCES station(id)
     private Station station;
 
-    @Column(name = "has_scooter", nullable = false)
-    private boolean hasScooter;
+    @Column(name = "state", nullable = false)
+    private String state;
+
+    @ManyToOne
+    @JoinColumn(name = "scooter") // Nullable, optional FK to SCOOTER
+    private Scooter scooter;
+
+    @Column(name = "version")
+    private LocalDateTime version;
 
     // Getters and setters
-    public Long getId() {
-        return id;
+
+    public Integer getNumber() {
+        return number;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public Station getStation() {
@@ -34,12 +44,27 @@ public class Dock {
         this.station = station;
     }
 
-    public boolean isHasScooter() {
-        return hasScooter;
+    public String getState() {
+        return state;
     }
 
-    public void setHasScooter(boolean hasScooter) {
-        this.hasScooter = hasScooter;
+    public void setState(String state) {
+        this.state = state;
     }
 
+    public Scooter getScooter() {
+        return scooter;
+    }
+
+    public void setScooter(Scooter scooter) {
+        this.scooter = scooter;
+    }
+
+    public LocalDateTime getVersion() {
+        return version;
+    }
+
+    public void setVersion(LocalDateTime version) {
+        this.version = version;
+    }
 }

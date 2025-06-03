@@ -1,34 +1,27 @@
 package isel.sisinf.model;
 
 import jakarta.persistence.*;
-import java.util.List;
 
 @Entity
-@Table(name = "SCOOTERMODEL")
+@Table(name = "scootermodel")
 public class ScooterModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer number;
+    private Long number;
 
-    @Column(length = 30, nullable = false)
+    @Column(nullable = false, length = 30)
     private String designation;
 
-    @Column(length = 30, nullable = false)
-    private String make;
-
     @Column(nullable = false)
-    private Integer stockAutonomy;
+    private Integer autonomy;
 
-    @OneToMany(mappedBy = "model")
-    private List<Scooter> scooters;
-
-    // Getters and Setters
-    public Integer getNumber() {
+    // Getters and setters
+    public Long getNumber() {
         return number;
     }
 
-    public void setNumber(Integer number) {
+    public void setNumber(Long number) {
         this.number = number;
     }
 
@@ -40,27 +33,11 @@ public class ScooterModel {
         this.designation = designation;
     }
 
-    public String getMake() {
-        return make;
+    public Integer getAutonomy() {
+        return autonomy;
     }
 
-    public void setMake(String make) {
-        this.make = make;
-    }
-
-    public Integer getStockAutonomy() {
-        return stockAutonomy;
-    }
-
-    public void setStockAutonomy(Integer autonomy) {
-        this.stockAutonomy = autonomy;
-    }
-
-    public List<Scooter> getScooters() {
-        return scooters;
-    }
-
-    public void setScooters(List<Scooter> scooters) {
-        this.scooters = scooters;
+    public void setAutonomy(Integer autonomy) {
+        this.autonomy = autonomy;
     }
 }

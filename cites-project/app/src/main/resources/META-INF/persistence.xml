@@ -12,6 +12,10 @@
         <class>isel.sisinf.model.Rider</class>
         <class>isel.sisinf.model.Card</class>
         <class>isel.sisinf.model.CardType</class>
+        <class>isel.sisinf.model.Dock</class>
+        <class>isel.sisinf.model.Station</class>
+        <class>isel.sisinf.model.Scooter</class>
+        <class>isel.sisinf.model.ScooterModel</class>
 
         <properties>
             <!-- Database connection settings -->

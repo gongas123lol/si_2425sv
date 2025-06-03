@@ -1,6 +1,7 @@
 package isel.sisinf.model;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "station")
@@ -10,10 +11,11 @@ public class Station {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String location;
+    @Column(nullable = false, precision = 6, scale = 4)
+    private BigDecimal latitude;
 
-    @Column(name = "max_docks", nullable = false)
-    private int maxDocks;
+    @Column(nullable = false, precision = 6, scale = 4)
+    private BigDecimal longitude;
 
     // Getters and setters
     public Long getId() {
@@ -24,19 +26,19 @@ public class Station {
         this.id = id;
     }
 
-    public String getLocation() {
-        return location;
+    public BigDecimal getLatitude() {
+        return latitude;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
     }
 
-    public int getMaxDocks() {
-        return maxDocks;
+    public BigDecimal getLongitude() {
+        return longitude;
     }
 
-    public void setMaxDocks(int maxDocks) {
-        this.maxDocks = maxDocks;
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
     }
 }
