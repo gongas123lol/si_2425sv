@@ -30,7 +30,7 @@ public class Rider {
     @Column(name = "dtregister", nullable = false)
     private LocalDateTime dtRegister;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cardid")
     private Card card;
 
@@ -45,25 +45,6 @@ public class Rider {
 
     @Transient
     private CardType typeOfCard;
-
-    /* --------------------  Callbacks JPA -------------------- */
-
-    @PostLoad
-    private void syncEnumAfterLoad() {
-        this.typeOfCard = typeOfCardDb == null
-                ? null
-                : CardType.fromDb(typeOfCardDb);
-    }
-
-    @PrePersist
-    @PreUpdate
-    private void syncDbBeforeSave() {
-        this.typeOfCardDb = typeOfCard == null
-                ? null
-                : typeOfCard.getDbValue();
-    }
-
-    /* --------------------  Getters e Setters -------------------- */
 
     public Long getId() {
         return id;

@@ -212,11 +212,11 @@ class UI
         try (JPAContext ctx = new JPAContext()) {
 
             var riders = ctx.getRiders().findAll();
-
+            System.out.println(riders.get(0).getName());
             if (riders.isEmpty()) {
                 System.out.println("Não existem utilizadores registados.");
             } else {
-                System.out.println("Id | Nome | Email | NIF | Data Registo | Cartão | Crédito");
+                System.out.println("Id | Nome | Email | NIF | Data Registo | ID Cartão | Crédito");
                 for (var r : riders) {
                     System.out.println(
                             r.getId()        + " | " +
@@ -224,7 +224,7 @@ class UI
                             r.getEmail()     + " | " +
                             r.getTaxNumber() + " | " +
                             r.getDtRegister()+ " | " +
-                            r.getCard()      + " | " +
+                            r.getCard().getId()+ " | " +
                             r.getCredit()
                     );
                 }
